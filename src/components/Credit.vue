@@ -1,5 +1,5 @@
 <template>
-    <div class="credit" :class="{featured: credit.featured}" >
+    <div class="credit" :class="{featured: credit.featured}" @click="$emit('creditClick', credit)" >
         <div class="credited-role" >
             {{displayRole}}
         </div>
@@ -20,6 +20,11 @@ export default {
     computed: {
         displayRole: function() {
             return this.credit[this.type]
+        }
+    },
+    methods: {
+        handleClick: function() {
+
         }
     }
 }
