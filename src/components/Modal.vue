@@ -132,4 +132,17 @@ export default {
             opacity: .5;
         }
     }
+
+    @media (min-width: 500px) {
+        .modal {
+            left: calc(50% - (500px/2));
+            &.open {
+                width: 500px;
+            }
+            .modal-bio {
+                width: 548px;
+                padding: 0 88px 0 36px;
+            }
+        }
+    }
 </style>

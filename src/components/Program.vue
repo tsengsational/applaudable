@@ -215,9 +215,15 @@ export default {
             width: 0px;
             height: 0px;
             overflow: hidden;
-        }
+        }        
+    }
 
-        
+    @media (min-width: 500px) {
+        .program {
+            width: 700px;
+            position: relative;
+            left: calc(50vw - 350px);
+        }
     }
 
 </style>
