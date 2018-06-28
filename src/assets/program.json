@@ -2,10 +2,13 @@
     "user": "tsengsational",
     "id": "sl3kj0u82je",
     "title": "Heavenly Kingdom",
+    "hide_title": false,
     "subtitle": "A musical tragedy",
+    "image": "https://i.pinimg.com/736x/dc/83/7e/dc837eb2b9e3c874e7765bae59f98540--chinese-painting-chinese-art.jpg",
     "organization": {
         "name": "Bitten Peach",
         "about": "sed elementum tempus egestas sed sed risus pretium quam vulputate dignissim suspendisse in est ante in nibh mauris cursus mattis molestie a iaculis at erat pellentesque adipiscing commodo elit at imperdiet dui accumsan sit amet nulla facilisi morbi tempus iaculis urna id volutpat lacus laoreet non curabitur gravida arcu ac tortor dignissim convallis aenean et tortor at risus viverra adipiscing at in tellus integer feugiat scelerisque varius morbi enim nunc faucibus a pellentesque sit amet porttitor eget dolor morbi non arcu risus quis varius quam quisque id diam vel quam elementum pulvinar etiam non quam lacus suspendisse faucibus interdum posuere",
+        "image": "https://static.tumblr.com/afbf9bcd70aebaf251a37a703bf3be0b/c8wydnl/Akrn3a8ic/tumblr_static_bitten-peach.png",
         "staff": [
             {
                 "name": "Tessa Tester",
@@ -74,15 +77,6 @@
                 "link": "https://www.jasontseng.com"
             },
             {
-                "name": "Peter Kuo",
-                "role": "Director",
-                "credited_role": "directed by",
-                "featured": true,
-                "bio": "sed elementum tempus egestas sed sed risus pretium quam vulputate dignissim suspendisse in est ante in nibh mauris cursus mattis molestie a iaculis at erat pellentesque adipiscing commodo elit at imperdiet dui accumsan sit amet nulla facilisi morbi tempus iaculis urna id volutpat lacus laoreet non curabitur gravida arcu ac tortor dignissim convallis aenean et tortor at risus viverra adipiscing at in tellus integer feugiat scelerisque varius morbi enim nunc faucibus a pellentesque sit amet porttitor eget dolor morbi non arcu risus quis varius quam quisque id diam vel quam elementum pulvinar etiam non quam lacus suspendisse faucibus interdum posuere",
-                "image": "https://2.bp.blogspot.com/-k_vs2-Dpufo/TiAF3kQElmI/AAAAAAAAAG4/wsavuKf3tM4/s320/_MCP6377.JPG",
-                "link": "http://www.peterjkuo.com"
-            },
-            {
                 "name": "Rick Burkhardt",
                 "role": "Composer & Lyricist",
                 "credited_role": "music and lyrics by",
@@ -90,6 +84,15 @@
                 "bio": "sed elementum tempus egestas sed sed risus pretium quam vulputate dignissim suspendisse in est ante in nibh mauris cursus mattis molestie a iaculis at erat pellentesque adipiscing commodo elit at imperdiet dui accumsan sit amet nulla facilisi morbi tempus iaculis urna id volutpat lacus laoreet non curabitur gravida arcu ac tortor dignissim convallis aenean et tortor at risus viverra adipiscing at in tellus integer feugiat scelerisque varius morbi enim nunc faucibus a pellentesque sit amet porttitor eget dolor morbi non arcu risus quis varius quam quisque id diam vel quam elementum pulvinar etiam non quam lacus suspendisse faucibus interdum posuere",
                 "link": "http://princemyshkins.com/rickburkhardt2.html",
                 "image": "http://princemyshkins.com/rickriver329.JPG"
+            },
+            {
+                "name": "Peter Kuo",
+                "role": "Director",
+                "credited_role": "directed by",
+                "featured": true,
+                "bio": "sed elementum tempus egestas sed sed risus pretium quam vulputate dignissim suspendisse in est ante in nibh mauris cursus mattis molestie a iaculis at erat pellentesque adipiscing commodo elit at imperdiet dui accumsan sit amet nulla facilisi morbi tempus iaculis urna id volutpat lacus laoreet non curabitur gravida arcu ac tortor dignissim convallis aenean et tortor at risus viverra adipiscing at in tellus integer feugiat scelerisque varius morbi enim nunc faucibus a pellentesque sit amet porttitor eget dolor morbi non arcu risus quis varius quam quisque id diam vel quam elementum pulvinar etiam non quam lacus suspendisse faucibus interdum posuere",
+                "image": "https://2.bp.blogspot.com/-k_vs2-Dpufo/TiAF3kQElmI/AAAAAAAAAG4/wsavuKf3tM4/s320/_MCP6377.JPG",
+                "link": "http://www.peterjkuo.com"
             },
             {
                 "name": "William Ivey Long",

@@ -4,7 +4,10 @@
         <div class="presenter">
             <h3>Presented by {{program.organization.name}}</h3>
         </div>
-        <div class="title" >
+        <div class="art" >
+            <img :src="prodImage" >
+        </div>
+        <div class="title" :class="{hide: program.hide_title}" >
             <h1>{{program.title}}</h1>
             <h4>{{program.subtitle}}</h4>
         </div>
@@ -122,6 +125,9 @@ export default {
         },
         allCredits: function() {
             return this.program.credits.creative.concat(this.program.credits.cast)
+        },
+        prodImage: function() {
+            return this.program.image !== null ? this.program.image : "#"
         }
     },
     methods: {
@@ -179,6 +185,12 @@ export default {
                 margin-top: .5rem;
             }
         }
+
+        .art img {
+            max-width: 400px;
+            max-height: 350px;
+        }
+
         .flex {
             display: flex;
             flex-wrap: wrap;
@@ -215,7 +227,10 @@ export default {
             width: 0px;
             height: 0px;
             overflow: hidden;
-        }        
+        } 
+        .hide {
+            display: none;
+        }       
     }
 
     @media (min-width: 500px) {
