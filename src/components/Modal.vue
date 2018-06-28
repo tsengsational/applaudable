@@ -139,6 +139,9 @@ export default {
             &.open {
                 width: 500px;
             }
+            .modal-image {
+                margin-top: 32px;
+            }
             .modal-bio {
                 width: 548px;
                 padding: 0 88px 0 36px;
