@@ -42,17 +42,18 @@
                             {{funder.name}} - <span class="donated-amount" >{{parseDonation(funder.amount_donated)}}</span>
                         </li>
                     </ul>
+                </div>
+                <div class="individual" >
                     <ul class="ind-fund-container" >
                         <li v-for="(funder, key) in displayIndFunders" :key="key" >
                             {{funder.name}} - <span class="donated-amount" >{{parseDonation(funder.amount_donated)}}</span>
                         </li>
                     </ul>
-
-                </div>
-                <div class="individual" >
-
                 </div>
             </div>
+        </div>
+        <div class="pre-load">
+            <img v-for="(credit, key) in allCredits" :key="key" :src="credit.image">
         </div>
     </div>    
 </template>
@@ -69,15 +70,7 @@ export default {
     data: function() {
         return {
             program: {},
-            modalCredit: {
-                name: "Jason Tseng",
-                role: "Book",
-                credited_role: "book by",
-                featured: true,
-                bio: "sed elementum tempus egestas sed sed risus pretium quam vulputate dignissim suspendisse in est ante in nibh mauris cursus mattis molestie a iaculis at erat pellentesque adipiscing commodo elit at imperdiet dui accumsan sit amet nulla facilisi morbi tempus iaculis urna id volutpat lacus laoreet non curabitur gravida arcu ac tortor dignissim convallis aenean et tortor at risus viverra adipiscing at in tellus integer feugiat scelerisque varius morbi enim nunc faucibus a pellentesque sit amet porttitor eget dolor morbi non arcu risus quis varius quam quisque id diam vel quam elementum pulvinar etiam non quam lacus suspendisse faucibus interdum posuere",
-                image: "https://static1.squarespace.com/static/574549d97da24fdfe9e2eba2/t/5745fd94b6aa6046fe0ca9bf/1464204694145/jason+headshot.png?format=500w",
-                link: "https://www.jasontseng.com"
-            },
+            modalCredit: {},
             modalOpen: false
         }
     },
@@ -126,7 +119,10 @@ export default {
                 }
                 return 0;
             })
-        }   
+        },
+        allCredits: function() {
+            return this.program.credits.creative.concat(this.program.credits.cast)
+        }
     },
     methods: {
             parseDonation: function(num) {
@@ -213,6 +209,12 @@ export default {
                     }
                 }
             }
+        }
+
+        .pre-load {
+            width: 0px;
+            height: 0px;
+            overflow: hidden;
         }
 
         

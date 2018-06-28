@@ -53,6 +53,9 @@ export default {
     computed: {
         getLink: function(path) {
             return path
+        },
+        background: function () {
+            return require('../assets/' + this.id + '.jpg')
         }
     },
     methods: {
