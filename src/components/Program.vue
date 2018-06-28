@@ -28,6 +28,7 @@
         </div>
         <div class="organization" >
             <h2 class="line" >About {{program.organization.name}}</h2>
+            <img class="org-image" :src="program.organization.image" alt="">
             <p class="org-about" >
                 {{program.organization.about}}
             </p>
@@ -206,6 +207,10 @@ export default {
                 font-size: 12px;
                 text-align: justify;
             }
+            .org-image {
+                max-width: 400px;
+                max-height: 300px;
+            }
 
             .funders {
                 ul {
@@ -238,6 +243,10 @@ export default {
             width: 700px;
             position: relative;
             left: calc(50vw - 350px);
+            .art img {
+                max-width: 700px;
+                max-height: 450px;
+            }
         }
     }
 
