@@ -11,6 +11,9 @@
             </form>
             <a @click="toggleHide" >Want to create an account?</a>
             <img src="https://developers.google.com/identity/images/btn_google_signin_dark_normal_web.png" alt="google-sign-in" class="google" @click="googleSignIn" >
+            <div class="alert" :class="{show: loginAlert} " >
+                {{loginAlert}}
+            </div>
         </div>
         <div class="sign-in" :class="{ hide: hideSignUp }">
             <h3>
@@ -18,16 +21,20 @@
             </h3>
             <form action="" @submit="signUp" >
                 <input class="email" type="text" placeholder="E-mail">
+                <input class="first-name" type="text" placeholder="First Name" >
                 <input class="password" type="password" placeholder="Password">
                 <button  >Sign up</button>
             </form>
             <a @click="toggleHide" >Already have an account?</a>
+            <div class="alert" :class="{show: signUpAlert} " >
+                {{signUpAlert}}
+            </div>
         </div>
     </div>
 </template>
 
 <script>
-import { auth } from '../main';
+import { auth, db } from '../main';
 import firebase from 'firebase/app'
 import 'firebase/auth'
 
@@ -36,7 +43,9 @@ var googleProvider = new firebase.auth.GoogleAuthProvider();
 export default {
     data: function() {
         return {
-            hideLogin: false
+            hideLogin: false,
+            loginAlert: null,
+            signUpAlert: null,
         }
     },
     computed: {
@@ -48,43 +57,70 @@ export default {
         signUp: function(event) {
             event.preventDefault()
             let email = event.target[0].value
-            let password = event.target[1].value
-            console.log(email, password)
-            auth.createUserWithEmailAndPassword(email, password).catch(function(error) {
-                // Handle Errors here.
-                var errorCode = error.code;
-                var errorMessage = error.message;
-                // ...
-            });     
+            let firstName = event.target[1].value
+            let password = event.target[2].value
+            console.log(email, firstName, password)
+            auth.createUserWithEmailAndPassword(email, password)
+                .then(() => {
+                    console.log("updating:", firstName)
+                    const user = auth.currentUser
+                    user.updateProfile({
+                        displayName: firstName
+                    })
+                        .then(() => {
+                            console.log("updated:", auth.currentUser.displayName)
+                            const uid = auth.currentUser.uid
+                            const displayName = auth.currentUser.displayName
+                            const email = auth.currentUser.email
+                            db.collection('users').doc(`${uid}`).set(
+                                {
+                                    displayName,
+                                    email
+                                }
+                            ).then(() => {
+                                console.log("saved to database!")
+                            }).catch((error) => {
+                                const errorCode = error.code;
+                                const errorMessage = error.message;
+                                console.log(errorCode, errorMessage)
+                            })
+                        })
+                        .catch((error)=>{
+                            const errorCode = error.code;
+                            const errorMessage = error.message;
+                            console.log(errorCode, errorMessage)
+                        } )
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    this.signUpAlert = errorCode + ": " + errorMessage
+                });     
         },
         logIn: function(event) {
             let email = event.target[0].value
             let password = event.target[1].value
-            auth.signInWithEmailAndPassword(email, password).catch(function(error) {
-            // Handle Errors here.
-            var errorCode = error.code;
-            var errorMessage = error.message;
-            // ...
-            });
+            auth.signInWithEmailAndPassword(email, password)
+                .catch((error) => {
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                this.loginAlert = errorCode + ": " + errorMessage;
+                });
         },
         googleSignIn: function() {
-            auth.signInWithPopup(googleProvider).then(function(result) {
-            // This gives you a Google Access Token. You can use it to access the Google API.
-            var token = result.credential.accessToken;
-            // The signed-in user info.
-            var user = result.user;
-            // ...
-            console.log(token, user)
-            }).catch(function(error) {
-            // Handle Errors here.
-            var errorCode = error.code;
-            var errorMessage = error.message;
-            // The email of the user's account used.
-            var email = error.email;
-            // The firebase.auth.AuthCredential type that was used.
-            var credential = error.credential;
-            // ...
-});
+            auth.signInWithPopup(googleProvider)
+                .then(function(result) {
+                var token = result.credential.accessToken;
+                var user = result.user;
+                console.log(token, user)
+                })
+                .catch(function(error) {
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                var email = error.email;
+                var credential = error.credential;
+                console.log(errorCode, errorMessage, email, credential)
+                });
         },
         toggleHide: function() {
             this.hideLogin = !this.hideLogin
@@ -115,7 +151,7 @@ export default {
             form {
                 input {
                     display: block;
-                    width: 390px;
+                    width: 100%;
                     height: 40px;
                     font-family: $body-font;
                     font-size: 14px;
@@ -139,6 +175,17 @@ export default {
                         background-color: $yellow;
 
                     }
+                }
+            }
+            .alert {
+                font-family: $body-font;
+                font-weight: 900;
+                margin-top: 10px;
+                color: $yellow;
+                opacity: 0;
+                transition: opacity .6s;
+                &.show {
+                    opacity: 1;
                 }
             }
             .google {

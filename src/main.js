@@ -5,6 +5,7 @@ import VueFire from 'vuefire'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 import 'firebase/auth'
+import 'firebase/storage'
 
 Vue.config.productionTip = false
 
@@ -24,9 +25,6 @@ new Vue({
     firebase.auth().onAuthStateChanged(function(user) {
       if (user) {
         this.user = user
-        console.log("user:", user.uid, user.email)
-      } else {
-
       }
     }.bind(this))
 
@@ -37,7 +35,11 @@ new Vue({
   render: h => h(App)
 }).$mount('#app')
 
+const settings = {timestampsInSnapshots: true};
+
 export const db = firebase.firestore()
+db.settings(settings)
 export const auth = firebase.auth()
+export const storage = firebase.storage()
 
 

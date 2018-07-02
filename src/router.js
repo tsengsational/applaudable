@@ -3,6 +3,8 @@ import Router from 'vue-router'
 import Login from './components/Login'
 import Home from './components/Home'
 import Program from './components/Program'
+import Dashboard from './components/Dashboard'
+import OrgForm from './components/OrgForm'
 
 Vue.use(Router)
 
@@ -22,6 +24,16 @@ export default new Router({
       path: "/test",
       name: 'program',
       component: Program
+    },
+    {
+      path: "/dashboard",
+      name: 'dashboard',
+      component: Dashboard
+    },
+    {
+      path: "/organizations/new",
+      name: "newOrganizations",
+      component: OrgForm
     }
   ]
 })
