@@ -5,6 +5,7 @@ import Home from './components/Home'
 import Program from './components/Program'
 import Dashboard from './components/Dashboard'
 import OrgForm from './components/OrgForm'
+import ProgramForm from './components/ProgramForm'
 
 Vue.use(Router)
 
@@ -34,6 +35,11 @@ export default new Router({
       path: "/organizations/new",
       name: "newOrganizations",
       component: OrgForm
+    },
+    {
+      path: "/programs/new",
+      name: "newPrograms",
+      component: ProgramForm
     }
   ]
 })

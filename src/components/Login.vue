@@ -173,7 +173,6 @@ export default {
                     transition: background-color .3s;
                     &:hover {
                         background-color: $yellow;
-
                     }
                 }
             }
