@@ -69,9 +69,9 @@
                 </router-link>
             </div>
             <button class="menu-btn" @click="handleMenuClick" v-bind:class="{menuOpen: menuOpen}">
-                <div class="menu-top" @click="handleMenuClick"></div>
-                <div class="menu-mid" @click="handleMenuClick"></div>
-                <div class="menu-btm" @click="handleMenuClick"></div>
+                <div class="menu-top"></div>
+                <div class="menu-mid"></div>
+                <div class="menu-btm"></div>
             </button>
         </div>
         <Menu :links="links" :menuOpen="menuOpen" />
