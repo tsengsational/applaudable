@@ -97,15 +97,23 @@ export default {
                     this.signUpAlert = errorCode + ": " + errorMessage
                 });     
         },
-        logIn: function(event) {
+        logIn: async function(event) {
             let email = event.target[0].value
             let password = event.target[1].value
-            auth.signInWithEmailAndPassword(email, password)
-                .catch((error) => {
-                var errorCode = error.code;
-                var errorMessage = error.message;
-                this.loginAlert = errorCode + ": " + errorMessage;
-                });
+            let user = await auth.signInWithEmailAndPassword(email, password)
+            let newPath = null
+            if (this.$route.query.redirect) {
+                newPath = this.$route.query.redirect
+            } else {
+                newPath = '/'
+            }
+            this.$router.push(newPath)
+                // .then(this.onLoginSuccess.bind(this))
+                // .catch((error) => {
+                // var errorCode = error.code;
+                // var errorMessage = error.message;
+                // this.loginAlert = errorCode + ": " + errorMessage;
+                // });
         },
         googleSignIn: function() {
             auth.signInWithPopup(googleProvider)

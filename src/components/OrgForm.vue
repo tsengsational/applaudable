@@ -176,6 +176,7 @@ export default {
             this[type][index][key] = value
         },
         handleSubmit: function() {
+            console.log(db)
             let data = {
                 staff: this.staff,
                 name: this.name,
@@ -185,7 +186,7 @@ export default {
                 institutional: this.institutional,
                 individual: this.individual,
                 funderTitle: this.funder_title,
-                funderText: this.funderText
+                funderText: this.funder_text
             }
             const currentUser = auth.currentUser
             const uid = currentUser.uid
@@ -201,10 +202,12 @@ export default {
                         text: data.funderText,
                         title_text: data.funderTitle,
                     }
-
                 })
                 .then(org => {
                     const docId = org.id
+                    org.set({
+                        id: docId
+                    }, {merge: true})
                     return org.collection('staff')
                 })
                 .then(staffRef => {

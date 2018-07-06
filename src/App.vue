@@ -1,8 +1,8 @@
 <template>
   <div id="app">
-    <Nav/>
+    <Nav :user="user" />
     <div class="router-view-wrapper" >
-      <router-view></router-view>
+      <router-view :user="user" ></router-view>
     </div>
   </div>
 </template>
@@ -14,7 +14,8 @@ export default {
   name: 'app',
   components: {
     Nav
-  }
+  },
+  props: ['user']
 }
 </script>
 

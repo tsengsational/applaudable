@@ -19,6 +19,13 @@ firebase.initializeApp({
   messagingSenderId: "552130165183"
 })
 
+const settings = {timestampsInSnapshots: true};
+export const db = firebase.firestore()
+export const auth = firebase.auth()
+export const storage = firebase.storage()
+db.settings(settings)
+
+
 new Vue({
   router,
   beforeCreate: function() {
@@ -27,19 +34,19 @@ new Vue({
         this.user = user
       }
     }.bind(this))
-
   },
   data: {
-    user: {}
+    user: {},
   },
-  render: h => h(App)
+  render: function (h) {
+    return h('App', {props: {user: this.user}})
+  },
+  components: {App}
 }).$mount('#app')
 
-const settings = {timestampsInSnapshots: true};
 
-export const db = firebase.firestore()
-db.settings(settings)
-export const auth = firebase.auth()
-export const storage = firebase.storage()
+
+
+
 
 
