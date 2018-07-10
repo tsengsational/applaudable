@@ -2,7 +2,7 @@
     <div class="program">
         <display-modal :modalCredit="modalCredit" :modal-open="modalOpen" @modalClose="toggleModal" />
         <div class="presenter">
-            <h3>Presented by {{organization.name}}</h3>
+            <h3>Presented by {{program.organization.name}}</h3>
         </div>
         <div class="art" >
             <img :src="prodImage" >
@@ -27,20 +27,20 @@
             </div>
         </div>
         <div class="organization" >
-            <h2 class="line" >About {{organization.name}}</h2>
-            <img class="org-image" :src="organization.image" alt="">
+            <h2 class="line" >About {{program.organization.name}}</h2>
+            <img class="org-image" :src="program.organization.image" alt="">
             <p class="org-about" >
-                {{organization.about}}
+                {{program.organization.about}}
             </p>
             <div class="org-staff" >
                 <h4>Staff</h4>
                 <div class="org-staff-container flex" >
-                    <credit v-for="(credit, key) in organization.staff" :key="key" :credit="credit" :type="'role'" />
+                    <credit v-for="(credit, key) in program.organization.staff" :key="key" :credit="credit" :type="'role'" />
                 </div>
             </div>
             <div class="funders">
                 <div class="institutional" >
-                    <h4>{{organization.funders.title_text}} </h4>
+                    <h4>{{program.organization.funders.title_text}} </h4>
                     <ul class="inst-fund-container" >
                         <li v-for="(funder, key) in displayInstFunders" :key="key" >
                             {{funder.name}} - <span class="donated-amount" >{{parseDonation(funder.amount_donated)}}</span>
@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import {db} from '../main.js'
+import jsonImport from '../assets/program.json'
 import Credit from './Credit'
 import DisplayModal from './Modal'
 
@@ -75,93 +75,35 @@ export default {
         return {
             program: {},
             modalCredit: {},
-            modalOpen: false,
-            programId: null,
-            creative: [],
-            cast: [],
-            organization: {
-                funders: {
-                        text: "", 
-                        title_text: ""
-                    }
-            },
-            staff: [],
-            institutional: [],
-            individual: []
+            modalOpen: false
         }
     },
     created: function() {
-        this.programId = this.$route.params.id
-    },
-    firestore() {
-        return {
-            program: db.collection('programs').doc(this.$route.params.id),
-            creative: db.collection('programs').doc(this.$route.params.id).collection('creative'),
-            cast:  db.collection('programs').doc(this.$route.params.id).collection('cast')
-        }
-    },
-    watch: {
-        program: async function(newState, oldState) {
-            if(newState.org_id) {
-                console.log("program loaded!")
-                const uid = newState.uid
-                const orgRef = await db.collection('users').doc(uid).collection('organizations').doc(newState.org_id)
-                const orgSnapshot = await orgRef.get()
-                const org = orgSnapshot.data()
-                this.organization = org
-
-                const staffQuery = await orgRef.collection('staff').get()
-                staffQuery.forEach(staff => {
-                    const data = staff.data()
-                    this.staff.push(data)
-                })
-                const institutionalQuery = await orgRef.collection('institutional').get()
-                institutionalQuery.forEach(funder => {
-                    const data = funder.data()
-                    this.institutional.push(data)
-                })
-                const individualQuery = await orgRef.collection('individual').get()
-                individualQuery.forEach(funder => {
-                    const data = funder.data()
-                    this.individual.push(data)
-                })
-            }
-        }
+        this.program = jsonImport;
     },
     computed: {
         featuredCreatives: function() {
-            if (this.creative.length > 0) {
-                let newArr = this.creative.filter(credit => {
-                    return credit.featured === true;
-                })
-                return newArr
-            } else {
-                return this.creative
-            }
+            return this.program.credits.creative.filter(credit => {
+                return credit.featured === true;
+            })
         },
         regularCreatives: function() {
-            if (this.creative.length > 0) {
-                return this.creative.filter(credit => {
-                    return credit.featured === false;
-                })
-            }
+            return this.program.credits.creative.filter(credit => {
+                return credit.featured === false;
+            })
         },
         featuredCast: function() {
-            if (this.cast.length > 0) {
-                return this.cast.filter(credit => {
-                    return credit.featured === true;
-                })
-            }
+            return this.program.credits.cast.filter(credit => {
+                return credit.featured === true;
+            })
         },
         regularCast: function() {
-            if (this.cast.length > 0) {
-                return this.cast.filter(credit => {
-                    return credit.featured === false;
-                })
-            }
+            return this.program.credits.cast.filter(credit => {
+                return credit.featured === false;
+            })
         },
         displayInstFunders: function() {
-            return this.institutional.sort((a, b) => {
+            return this.program.organization.funders.institutional.sort((a, b) => {
                 if (a.amount_donated < b.amount_donated) {
                     return -1;
                 }
@@ -172,7 +114,7 @@ export default {
             })
         },
         displayIndFunders: function() {
-            return this.individual.sort((a, b) => {
+            return this.program.organization.funders.individual.sort((a, b) => {
                 if (a.amount_donated < b.amount_donated) {
                     return -1;
                 }
@@ -183,7 +125,7 @@ export default {
             })
         },
         allCredits: function() {
-            return this.creative.concat(this.cast)
+            return this.program.credits.creative.concat(this.program.credits.cast)
         },
         prodImage: function() {
             return this.program.image !== null ? this.program.image : "#"

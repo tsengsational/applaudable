@@ -1,41 +1,43 @@
 <template>
     <div :class="className" >
-        <form class="credit-inputs" >
-            <label for="name">
-                Name: 
-            </label>
-            <input type="text" name="name" placeholder="Jane Doe" @change="handleChange" >
-            <label for="role">
-                Role: 
-            </label>
-            <input type="text" name="role" placeholder="e.g. Lady MacBeth, Director, Playwright, etc." @change="handleChange" >
-            <label for="credited_role">
-                Credited Role: 
-            </label>
-            <input type="text" name="credited_role" placeholder="e.g. Lady MacBeth, Directed By, Written By, etc." @change="handleChange" >
-            <label class="bio" for="bio">
-                Bio:
-            </label>
-            <textarea name="bio" @change="handleChange" placeholder="e.g. Jane Doe is pleased to be making her debut performance of... etc." />
-            <label for="featured">Featured?:</label>
-            <input type="checkbox" name="featured" value="true" class="checkbox" @change="handleChange" >
-            <label for="link">
-                Link: 
-            </label>
-            <input type="text" name="link" placeholder="http://www.someplace.com" @change="handleChange" >
-            <label for="image">
-                Headshot:
-            </label>
-            <div class="image-upload-input-container" v-if="showUploadInput">
-                <input class="image-upload" type="file" name="image" @change="handleFileSelect" >
-                <button class="image-upload-btn" v-if="showUploadBtn" @click.prevent="handleUploadClick" >upload</button>
-            </div>
-            <div class="image-uploaded-container" >
-                <span class="uploaded-filename" v-if="imageUploaded" >
-                    {{uploadedFilename}}
-                </span><button class="image-upload-cancel" @click.prevent="handleUploadCancel" v-if="imageUploaded">x</button>
-            </div>
-        </form>
+        <div class="credit-container" >
+            <form class="credit-inputs" >
+                <label for="name">
+                    Name: 
+                </label>
+                <input type="text" name="name" placeholder="Jane Doe" @change="handleChange" >
+                <label for="role">
+                    Role: 
+                </label>
+                <input type="text" name="role" placeholder="e.g. Lady MacBeth, Director, Playwright, etc." @change="handleChange" >
+                <label for="credited_role">
+                    Credited Role: 
+                </label>
+                <input type="text" name="credited_role" placeholder="e.g. Lady MacBeth, Directed By, Written By, etc." @change="handleChange" >
+                <label class="bio" for="bio">
+                    Bio:
+                </label>
+                <textarea name="bio" @change="handleChange" placeholder="e.g. Jane Doe is pleased to be making her debut performance of... etc." />
+                <label for="featured">Featured?:</label>
+                <input type="checkbox" name="featured" value="true" class="checkbox" @change="handleChange" >
+                <label for="link">
+                    Link: 
+                </label>
+                <input type="text" name="link" placeholder="http://www.someplace.com" @change="handleChange" >
+                <label for="image">
+                    Headshot:
+                </label>
+                <div class="image-upload-input-container" v-if="showUploadInput">
+                    <input class="image-upload" type="file" name="image" @change="handleFileSelect" >
+                    <button class="image-upload-btn" v-if="showUploadBtn" @click.prevent="handleUploadClick" >upload</button>
+                </div>
+                <div class="image-uploaded-container" >
+                    <span class="uploaded-filename" v-if="imageUploaded" >
+                        {{uploadedFilename}}
+                    </span><button class="image-upload-cancel" @click.prevent="handleUploadCancel" v-if="imageUploaded">x</button>
+                </div>
+            </form>
+        </div>
     </div>
 </template>
 
@@ -69,7 +71,16 @@ export default {
     methods: {
         handleChange: function (event) {
             const key = event.target.name
-            const value = event.target.value
+            const inputType = event.target.type
+            let value = null
+            if (inputType === "checkbox") {
+               value = event.target.checked
+            } else if (inputType === "number") {
+                value = parseInt(event.target.value)
+            } 
+            else {
+                value = event.target.value
+            }
             const index = this.index
             const type = this.type
             this.$emit("credit-change", [type, key, value, index])
@@ -96,7 +107,7 @@ export default {
                     this.imageUploaded = true;
                     this.uploadedFilename = this.file.name;
                     this.$emit("image-upload", [
-                        this.imageUrl, this.index, this.type
+                        this.imageUrl, this.index, this.type, this.imagePath
                     ])
                 })
                 .catch(console.error);
@@ -123,54 +134,62 @@ export default {
 <style lang="scss">
 @import '../assets/settings.scss';
 
-    .credit-inputs {
-        margin-bottom: 32px;
-        label.bio {
-            vertical-align: top;
-        }
+    .credit-container {
+        margin-bottom: 16px;
+        border: 1px $gray solid;
+        padding: 32px 0;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px $gray;
 
-        .image-uploaded-container {
-        display: inline;
-
-        .uploaded-filename {
-            display: inline-block;
-            background-color: $yellow;
-            padding: 5px 10px;
-            height: 30px;
-            box-sizing: border-box;
-            border-radius: 10px;
-            color: $black;
-            &.hide {
-                display:none;
-        }
-        }
-        button.image-upload-cancel {
-            margin-left: 10px;
-            width: 30px;
-            height: 30px;
-            border: 0;
-            background-color: $gray;
-            border: none;
-            font-family: $body-font;
-            text-align: center;
-            font-size: 14px;
-            font-weight: 900;
-            text-transform: uppercase;
-            color: $white;
-            opacity: 1;
-            transition: background-color .3s, opacity .6s, color .3s;
-            &.hide {
-                display: none;
-                opacity: 0;
+        .credit-inputs {
+            margin-bottom: 32px;
+            label.bio {
+                vertical-align: top;
             }
-            &:hover {
+
+            .image-uploaded-container {
+            display: inline;
+
+            .uploaded-filename {
+                display: inline-block;
                 background-color: $yellow;
+                padding: 5px 10px;
+                height: 30px;
+                box-sizing: border-box;
+                border-radius: 10px;
                 color: $black;
-            } 
+                &.hide {
+                    display:none;
+                }
             }
-            &.hide {
-                display: none;
+            button.image-upload-cancel {
+                margin-left: 10px;
+                width: 30px;
+                height: 30px;
+                border: 0;
+                background-color: $gray;
+                border: none;
+                font-family: $body-font;
+                text-align: center;
+                font-size: 14px;
+                font-weight: 900;
+                text-transform: uppercase;
+                color: $white;
+                opacity: 1;
+                transition: background-color .3s, opacity .6s, color .3s;
+                &.hide {
+                    display: none;
+                    opacity: 0;
+                }
+                &:hover {
+                    background-color: $yellow;
+                    color: $black;
+                } 
+                }
+                &.hide {
+                    display: none;
+                }
             }
-    }
+        }
     }
 </style>

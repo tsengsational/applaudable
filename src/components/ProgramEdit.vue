@@ -4,34 +4,45 @@
         <div class="presenter">
             <h3>Presented by {{organization.name}}</h3>
         </div>
-        <div class="art" >
-            <img :src="prodImage" >
-        </div>
-        <div class="title" :class="{hide: program.hide_title}" >
-            <h1>{{program.title}}</h1>
-            <h4>{{program.subtitle}}</h4>
+        <div class="program_edit" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave" >
+            <div class="art" >
+                <img :src="prodImage" >
+            </div>
+            <div class="title" :class="{hide: program.hide_title}" >
+                <h1>{{program.title}}</h1>
+                <h4>{{program.subtitle}}</h4>
+            </div>
+            <button class="edit-btn" :class="{show: showEditButton.program_edit}">
+                <font-awesome-icon icon="edit" ></font-awesome-icon>
+            </button>
+
         </div>
         <div class="featured-creative flex" >
-            <credit v-for="(credit, key) in featuredCreatives" :key="key" :credit="credit" :type="'credited_role'" @creditClick="handleCreditClick" />
+            <credit v-for="(credit, key) in featuredCreatives" :key="key" :credit="credit" :programId="programId" :creditType="'creative'" :type="'credited_role'" @creditClick="handleCreditClick" :editing="true" ></credit>
         </div>
         <div class="regular-creative flex" >
-            <credit v-for="(credit, key) in regularCreatives" :key="key" :credit="credit" :type="'credited_role'" @creditClick="handleCreditClick" />
+            <credit v-for="(credit, key) in regularCreatives" :key="key" :credit="credit" :programId="programId" :creditType="'creative'" :type="'credited_role'" @creditClick="handleCreditClick" />
         </div>
         <div class="cast" >
             <h2 class="cast-title" ><span class="text line" >Featuring</span></h2>
             <div class="featured-cast-container flex">
-                <credit v-for="(credit, key) in featuredCast" :key="key" :credit="credit" :type="'role'" @creditClick="handleCreditClick" />
+                <credit v-for="(credit, key) in featuredCast" :key="key" :credit="credit" :programId="programId" :creditType="'cast'" :type="'role'" @creditClick="handleCreditClick" />
             </div>
             <div class="regular-cast-container flex" >
-                <credit v-for="(credit, key) in regularCast" :key="key" :credit="credit" :type="'role'" @creditClick="handleCreditClick" />
+                <credit v-for="(credit, key) in regularCast" :key="key" :credit="credit" :programId="programId" :creditType="'cast'" :type="'role'" @creditClick="handleCreditClick" />
             </div>
         </div>
-        <div class="organization" >
-            <h2 class="line" >About {{organization.name}}</h2>
-            <img class="org-image" :src="organization.image" alt="">
-            <p class="org-about" >
-                {{organization.about}}
-            </p>
+        <div class="organization"  >
+            <div class="org_edit" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave" >
+                <h2 class="line" >About {{organization.name}}</h2>
+                <img class="org-image" :src="organization.image" alt="">
+                <p class="org-about" >
+                    {{organization.about}}
+                </p>
+                <button class="edit-btn" :class="{show: showEditButton.org_edit}">
+                <font-awesome-icon icon="edit" ></font-awesome-icon>
+            </button>
+            </div>
             <div class="org-staff" >
                 <h4>Staff</h4>
                 <div class="org-staff-container flex" >
@@ -67,6 +78,8 @@ import {db} from '../main.js'
 import Credit from './Credit'
 import DisplayModal from './Modal'
 
+
+
 export default {
     components: {
         Credit, DisplayModal
@@ -87,7 +100,11 @@ export default {
             },
             staff: [],
             institutional: [],
-            individual: []
+            individual: [],
+            showEditButton: {
+                program_edit: null,
+                org_edit: null,
+            }
         }
     },
     created: function() {
@@ -187,6 +204,9 @@ export default {
         },
         prodImage: function() {
             return this.program.image !== null ? this.program.image : "#"
+        },
+        displayCreditClass: function(index) {
+            return 
         }
     },
     methods: {
@@ -198,6 +218,14 @@ export default {
                 console.log(this.modalCredit.name)
                 this.toggleModal()
             },
+            handleMouseEnter: function(event) {
+                const className = event.target.classList[0]
+                this.showEditButton[className] = true
+            },
+            handleMouseLeave: function(event) {
+                const className = event.target.classList[0]
+                this.showEditButton[className] = false
+            },
             toggleModal: function() {
                 this.modalOpen = !this.modalOpen
             }
@@ -208,6 +236,10 @@ export default {
 <style lang="scss">
     @import '../assets/settings.scss';
     .program {
+        .program_edit, .credit_container, .org_edit {
+            position: relative;
+        }
+
         .cast-title {
             margin-bottom: 5px;
         }
@@ -230,6 +262,32 @@ export default {
         .line::after {
             margin: 0 32px 0 16px;
         }
+
+        button.edit-btn {
+            position: absolute;
+            right: 30px;
+            bottom: 30px;
+            height: 30px;
+            width: 30px;
+            border-radius: 50%;
+            border: 1px $gray solid;
+            background-color: $gray;
+            opacity: 0;
+            color: $white;
+            text-align:center;
+            padding-left: 10px;
+            transition: opacity .3s, background-color .3s, color .3s, border .3s;
+            &.show {
+                opacity: 1;
+            }
+            &:hover {
+                background-color: $yellow;
+                border: 1px $yellow solid;
+                color: $black;
+            }
+            
+        }
+
         .featured-creative, .regular-creative, .featured-cast-container, .regular-cast-container {
             .credit {
                 cursor: pointer;

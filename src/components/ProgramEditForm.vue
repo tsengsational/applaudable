@@ -3,11 +3,11 @@
         <h2>New Program</h2>
         <form class="info" >
             <label for="title">Title</label>
-            <input type="text" name="title" @change="handleChange" >
+            <input type="text" name="title" :value="program.title" @change="handleChange" >
             <label for="hide_title">Hide Title?:</label>
-            <input type="checkbox" name="hide_title" value="true" class="checkbox" @change="handleCheckbox" >
+            <input type="checkbox" name="hide_title" :value="program.hide_title" class="checkbox" @change="handleCheckbox" >
             <label for="subtitle">Sub-Title</label>
-            <input type="text" name="subtitle" @change="handleChange" >
+            <input type="text" name="subtitle" :value="program.subtitle" @change="handleChange" >
             <label for="image">
                 Program Art
             </label>
@@ -24,7 +24,7 @@
         <div class="credits-container">
             <div class="creative">  
                 <h3>Creative Team</h3>
-                <credit-form v-for="(credit, key) in creativeArr" :key="key" :index="key" @credit-change="handleCreditChange" @image-upload="handleCreditUpload" @image-cancel="handleCreditCancel" :type="'creative'"/>
+                <credit-edit-form v-for="(credit, key) in creative" :credit="credit" :key="key" :index="key" @credit-change="handleCreditChange" @image-upload="handleCreditUpload" @image-cancel="handleCreditCancel" :type="'creative'"/>
                 <div class="credits-controls" >
                     <button class="add-credit" @click.prevent="handleCreditClick('add', 'creative')" ><span>+</span></button>
                     <button class="subtract-credit" @click.prevent="handleCreditClick('subtract', 'creative')" ><span>-</span></button>
@@ -32,7 +32,7 @@
             </div>
             <div class="cast" >
                 <h3>Cast</h3>
-                <credit-form v-for="(credit, key) in castArr" :key="key" :index="key" @credit-change="handleCreditChange" @image-upload="handleCreditUpload" @image-cancel="handleCreditCancel" :type="'cast'" />
+                <credit-edit-form v-for="(credit, key) in cast" :credit="credit" :key="key" :index="key" @credit-change="handleCreditChange" @image-upload="handleCreditUpload" @image-cancel="handleCreditCancel" :type="'cast'" />
                 <div class="credits-controls" >
                     <button class="add-credit" @click.prevent="handleCreditClick('add', 'cast')" ><span>+</span></button>
                     <button class="subtract-credit" @click.prevent="handleCreditClick('subtract', 'cast')" ><span>-</span></button>
@@ -56,15 +56,15 @@
 
 <script>
 import {db, auth, storage} from '../main'
-import CreditForm from './CreditForm'
 
 export default {
     components: {
-        CreditForm
+        CreditEditForm
     },
     props: ['user'],
     data: function() {
         return {
+            program: {},
             organizations: [],
             organization: {},
             title: null,
@@ -73,8 +73,6 @@ export default {
             mainImageUrl: null,
             subtitle: null,
             mainUploadedFilename: null,
-            creativeArr: [0],
-            castArr: [0],
             hideTitle: null,
             creative: [{
                 name: null,
@@ -104,29 +102,33 @@ export default {
             return !this.showImageUpload
         }
     },
+    watched: {
+        program: function() {
+
+        }
+    },
     firestore () {
         return {
-            organizations: db.collection("users").doc(this.user.uid.toString()).collection("organizations")
+            program: db.collection('programs').doc(this.$route.params.id),
+            organizations: db.collection("users").doc(this.user.uid.toString()).collection("organizations"),
+            creative: db.collection('programs').doc(this.$route.params.id).collection('creative'),
+            cast:  db.collection('programs').doc(this.$route.params.id).collection('cast')
         }
     },
     methods: {
         handleCheckbox: function(event) {
-            const value = event.target.checked
+            const value = event.target.value
             this.hideTitle = value
         },
         handleCreditClick: function(action, type) {
                 let emptyCredit = {name: null, role: null, credited_role: null, bio: null, link: null, image: null, featured: null}
             if (action === "add" && type === "creative") {
-                this.creativeArr.push(0)
                 this.creative.push(emptyCredit)
             } else if (action === "subtract" && type === "creative") {
-                this.creativeArr.pop()
                 this.creative.pop()
             } else if ( action === "add" && type === "cast") {
-                this.castArr.push(0)
                 this.cast.push(emptyCredit)
             } else if (action === "subtract" && type === "cast") {
-                this.castArr.pop()
                 this.creative.pop()
             }
         },
@@ -135,7 +137,7 @@ export default {
             const type = event.target.type
             let value = null
             if (type === "checkbox") {
-               value = event.target.checked
+               value = event.target.value === "true" ? true : false
             } else if (type === "number") {
                 value = parseInt(event.target.value)
             } 
@@ -164,9 +166,7 @@ export default {
             const url = payload[0]
             const index = payload[1]
             const type = payload[2]
-            const path = payload [3]
             this[type][index].image = url
-            this[type][index].imagePath = path
             console.log("uploaded image:", url)
         },
         handleFileSelect: function(event) {
@@ -233,8 +233,7 @@ export default {
                             image: credit.image,
                             link: credit.link,
                             bio: credit.bio,
-                            index: index,
-                            id: creditId 
+                            index: index
                             }
                         batch.set(ref, payload)
                         })
@@ -249,8 +248,7 @@ export default {
                             image: credit.image,
                             link: credit.link,
                             bio: credit.bio,
-                            index: index,
-                            imagePath: credit.imagePath
+                            index: index
                             }
                         batch.set(ref, payload)
                         })

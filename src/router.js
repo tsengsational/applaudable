@@ -2,10 +2,13 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Login from './components/Login'
 import Home from './components/Home'
+import ProgramTest from './components/ProgramTest'
 import Program from './components/Program'
 import Dashboard from './components/Dashboard'
 import OrgForm from './components/OrgForm'
 import ProgramForm from './components/ProgramForm'
+import ProgramEdit from './components/ProgramEdit'
+import CreditEditForm from './components/CreditEditForm'
 import firebase from 'firebase/app'
 import 'firebase/auth'
 
@@ -38,8 +41,8 @@ export default new Router({
     },
     {
       path: "/test",
-      name: 'program',
-      component: Program
+      name: 'program-test',
+      component: ProgramTest
     },
     {
       path: "/dashboard",
@@ -58,6 +61,24 @@ export default new Router({
       name: "newPrograms",
       component: ProgramForm,
       beforeEnter: requireAuth
+    },
+    {
+      path: "/programs/:id/",
+      name: "viewProgram",
+      component: Program
+    },
+    {
+      path: "/programs/:id/edit",
+      name: "editProgram",
+      component: ProgramEdit,
+      beforeEnter: requireAuth
+    },
+    {
+      path: "/programs/:programId/:creditType/:id/edit",
+      name: "editCredit",
+      component: CreditEditForm,
+      beforeEnter: requireAuth,
+      props: true
     }
   ]
 })

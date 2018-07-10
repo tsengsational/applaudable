@@ -142,19 +142,19 @@ export default {
     @import "../assets/settings.scss";
 
     .login-container {
-        width: 400px;
+        width: 90%;
         height: 400px;
         position: relative;
         top: calc((50vh - 60px) - 150px);
-        left: calc(50vw - 200px);
+        left: calc(50vw - 45%);
         overflow: hidden;
         transform: translateX(0px);
         .login, .sign-in {
-            width: 400px;
+            width: 100%;
             position: absolute;
             transition: transform .6s;
             &.hide {
-                transform: translateX(400px);
+                transform: translateX(100%);
             }
             form {
                 input {
@@ -200,7 +200,7 @@ export default {
                 cursor: pointer;
                 position: relative;
                 margin-top: 16px;
-                left: calc(200px - (191px/2));
+                left: calc(50% - (191px/2));
             }
         }
         a {
@@ -213,6 +213,30 @@ export default {
             }
         }
     }
+
+@media (min-width: 500px) {
+    .login-container {
+        width: 400px;
+        height: 400px;
+        position: relative;
+        top: calc((50vh - 60px) - 150px);
+        left: calc(50vw - 200px);
+        .login, .sign-in {
+            width: 400px;
+            &.hide {
+                transform: translateX(400px);
+            }
+
+            .google {
+                display: block;
+                cursor: pointer;
+                position: relative;
+                margin-top: 16px;
+                left: calc(200px - (191px/2));
+            }
+        }
+    }
+}
 </style>
 
 
