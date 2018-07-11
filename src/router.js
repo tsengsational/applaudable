@@ -9,6 +9,8 @@ import OrgForm from './components/OrgForm'
 import ProgramForm from './components/ProgramForm'
 import ProgramEdit from './components/ProgramEdit'
 import CreditEditForm from './components/CreditEditForm'
+import ProgramEditForm from './components/ProgramEditForm'
+import OrgEditForm from './components/OrgEditForm'
 import firebase from 'firebase/app'
 import 'firebase/auth'
 
@@ -74,11 +76,23 @@ export default new Router({
       beforeEnter: requireAuth
     },
     {
+      path: "/programs/:id/edit/form",
+      name: "editProgramForm",
+      component: ProgramEditForm,
+      beforeEnter: requireAuth
+    },
+    {
       path: "/programs/:programId/:creditType/:id/edit",
       name: "editCredit",
       component: CreditEditForm,
       beforeEnter: requireAuth,
       props: true
+    },
+    {
+      path: "/users/:uid/organizations/:id/edit",
+      name: "editOrg",
+      component: OrgEditForm,
+      beforeEnter: requireAuth,
     }
   ]
 })

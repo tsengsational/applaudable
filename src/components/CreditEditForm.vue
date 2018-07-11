@@ -1,5 +1,8 @@
 <template>
     <div class="credit-edit-container" >
+        <button class="back btn" @click.prevent="handleBack" >
+            <font-awesome-icon icon="arrow-left" ></font-awesome-icon>
+        </button>
         <form class="credit-inputs" >
             <label for="name">
                 Name: 
@@ -29,7 +32,7 @@
             <span class="image-upload-container" v-if="noImage">
                 <div class="image-upload-input-container" v-if="showUploadInput">
                     <input class="image-upload" type="file" name="image" @change="handleFileSelect" >
-                    <button class="image-upload-btn" v-if="showUploadBtn" @click.prevent="handleUploadClick" >upload</button>
+                    <button class="image-upload-btn btn" v-if="showUploadBtn" @click.prevent="handleUploadClick" >upload</button>
                 </div>
                 <div class="image-uploaded-container" >
                     <span class="uploaded-filename" v-if="imageUploaded" >
@@ -90,6 +93,9 @@ export default {
         }
     },
     methods: {
+        handleBack: function() {
+            this.$router.go(-1)
+        },
         handleChange: function (event) {
             const key = event.target.name
             const inputType = event.target.type
@@ -150,9 +156,6 @@ export default {
                     this.uploadedFilename = this.file.name;
                     this.credit.image = this.imageUrl
                     this.credit.imagePath = this.imagePath
-                    // this.$emit("image-upload", [
-                    //     this.imageUrl, this.index, this.type
-                    // ])
                 })
                 .catch(console.error);
         },
@@ -187,21 +190,15 @@ div.credit-edit-container {
     font-family: $body-font;
     text-align: left;
 
-
-    .credit-inputs {    
-        width: 90%;
-        height: 90%;
+    .back {
+        width: 50px;
+        height: 50px;
+        margin-bottom: 16px;
         position: relative;
-        top: 5%;
         left: 5%;
-        background-color: $white;
+    }
 
-        .image-upload-btn {
-        position: relative;
-        left: calc(100% - 100px);
-        display: block;
-        width: 100px;
-        height: 40px;
+    .btn {
         border: 0;
         background-color: $gray;
         border: none;
@@ -222,6 +219,24 @@ div.credit-edit-container {
             color: $black;
         } 
     }
+
+    .credit-inputs {    
+        width: 90%;
+        height: 90%;
+        position: relative;
+        top: 5%;
+        left: 5%;
+        background-color: $white;
+
+
+        .image-upload-btn {
+            position: relative;
+            left: calc(100% - 100px);
+            display: block;
+            width: 100px;
+            height: 40px;
+
+        }
 
         .save-btn {
             margin-top: 16px;

@@ -7,13 +7,14 @@ import 'firebase/firestore'
 import 'firebase/auth'
 import 'firebase/storage'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
+import { faEdit, faTrashAlt, faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import { faComment } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon, FontAwesomeLayers, FontAwesomeLayersText } from '@fortawesome/vue-fontawesome'
 
 library.add(
   faEdit,
-  faTrashAlt
+  faTrashAlt,
+  faArrowLeft
 )
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)

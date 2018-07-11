@@ -1,39 +1,47 @@
-k<template>
+<template>
     <div class="org-form">
-        <h2>Add Organization</h2>
+        <button class="back btn" @click.prevent="handleBack" >
+            <font-awesome-icon icon="arrow-left" ></font-awesome-icon>
+        </button>
+        <h2>Edit Organization</h2>
         <form class="org">
             <label for="name">
                 Name:
             </label>
-            <input type="text" placeholder="e.g. Something Productions" name="name" @change="handleChange">
+            <input type="text" placeholder="e.g. Something Productions" :value="organization.name" name="name" @change="handleChange">
             <label class="about" for="about">
                 About:
             </label>
-            <textarea name="about" @change="handleChange" placeholder="e.g. Mission statement, general information, etc." />
-            <label for="image">
+            <textarea name="about" @change="handleChange" :value="organization.about" placeholder="e.g. Mission statement, general information, etc." />
+            <label class="art-label" for="image">
                 Logo/Image
             </label>
-            <div class="image-upload-input-container" :class="{hide: imageUploaded}">
-                <input class="image-upload" type="file" name="image" @change="handleFileSelect" >
-                <button class="image-upload-btn" :class="{hide: hideUploadBtn}" @click.prevent="handleUploadClick" >upload</button>
-            </div>
-            <div class="image-uploaded-container" >
-                <span class="uploaded-filename" :class="{hide: hideUploaded}" >
-                    {{uploadedFilename}}
-                </span><button class="image-upload-cancel" @click.prevent="handleUploadCancel" :class="{hide: hideUploaded}">x</button>
+            <span v-if="noImage">
+                <div class="image-upload-input-container" :class="{hide: imageUploaded}">
+                    <input class="image-upload" type="file" name="image" @change="handleFileSelect" >
+                    <button class="image-upload-btn" :class="{hide: hideUploadBtn}" @click.prevent="handleUploadClick" >upload</button>
+                </div>
+                <div class="image-uploaded-container" >
+                    <span class="uploaded-filename" :class="{hide: hideUploaded}" >
+                        {{uploadedFilename}}
+                    </span><button class="image-upload-cancel" @click.prevent="handleUploadCancel" :class="{hide: hideUploaded}">x</button>
+                </div>
+            </span>
+            <div class="art-image" :style="imageStyle" v-if="organization.image" >
+                <button class="image-trash" @click.prevent="handleImageDelete" ><font-awesome-icon icon="trash-alt"></font-awesome-icon> </button>
             </div>
         </form>
         <div class="staff-container">
             <h4>Staff</h4>
-            <form class="staff" v-for="(staff, key) in staffArr" :key="key">
+            <form class="staff" v-for="(staff, key) in staff" :key="key">
                 <label :for="ArrName('staff', 'name', key)">
                     Name: 
                 </label>
-                <input type="text" :name="ArrName('staff', 'name', key)" placeholder="Jane Doe" @change="handleStaffChange" >
+                <input type="text" :name="ArrName('staff', 'name', key)" :value="staff.name" placeholder="Jane Doe" @change="handleStaffChange" >
                 <label :for="ArrName('staff', 'role', key)">
                     Role: 
                 </label>
-                <input type="text" :name="ArrName('staff', 'role', key)" placeholder="Executive Director" @change="handleStaffChange" >
+                <input type="text" :name="ArrName('staff', 'role', key)" :value="staff.role" placeholder="Executive Director" @change="handleStaffChange" >
             </form>
             <div class="staff-controls" >
                 <button class="add-staff" @click="handleStaffClick('add')" ><span>+</span></button>
@@ -44,21 +52,21 @@ k<template>
             <form class="funder-info">
             <h4>Funders</h4>
                 <label for="funder_title" class="funder_title" >Title text</label>
-                <input type="text" name="funder_title" placeholder="Thank you to these donors" @change="handleChange" >
+                <input type="text" name="funder_title" :value="organization.funders.title_text" placeholder="Thank you to these donors" @change="handleChange" >
                 <label for="funderText" class="funder_text">Funder Text</label>
-                <textarea name="funder_text" placeholder="e.g. We would like to thank the following donors..." @change="handleChange" ></textarea>
+                <textarea name="funder_text" :value="organization.funders.text" placeholder="e.g. We would like to thank the following donors..." @change="handleChange" ></textarea>
             </form>
             <div class="institutional" >
                 <h5>Institutional funders:</h5>
-                <form class="funders" v-for="(institution, key) in institutionalArr" :key="key">
+                <form class="funders" v-for="(institution, key) in institutional" :key="key">
                     <label :for="ArrName('institutional', 'name', key)">
                         Name: 
                     </label>
-                    <input type="text" :name="ArrName('institutional', 'name', key)" placeholder="Doe Family Fund" @change="handleFunderChange" >
+                    <input type="text" :name="ArrName('institutional', 'name', key)" :value="institution.name" placeholder="Doe Family Fund" @change="handleFunderChange" >
                     <label :for="ArrName('institutional', 'amount_donated', key)">
                         Funding Level (no symbols e.g. $): 
                     </label>
-                    <input type="number" :name="ArrName('institutional', 'amount_donated', key)" placeholder="e.g. 100" @change="handleFunderChange" >
+                    <input type="number" :name="ArrName('institutional', 'amount_donated', key)" placeholder="e.g. 100" :value="institution.amount_donated" @change="handleFunderChange" >
                 </form>
                 <div class="funder-controls" >
                     <button class="add-staff" @click.prevent="handleFunderClick('add', 'institution')" ><span>+</span></button>
@@ -67,15 +75,15 @@ k<template>
             </div>
             <div class="individual" >
                 <h5>Individual funders:</h5>
-                <form class="funders" v-for="(individual, key) in individualArr" :key="key">
+                <form class="funders" v-for="(individual, key) in individual" :key="key">
                     <label :for="ArrName('individual', 'name', key)">
                         Name: 
                     </label>
-                    <input type="text" :name="ArrName('individual', 'name', key)" placeholder="Doe Family Fund" @change="handleFunderChange" >
+                    <input type="text" :name="ArrName('individual', 'name', key)" :value="individual.name" placeholder="Doe Family Fund" @change="handleFunderChange" >
                     <label :for="ArrName('individual', 'amount_donated', key)">
                         Amount Donated: 
                     </label>
-                    <input type="number" :name="ArrName('individual', 'amount_donated', key)" placeholder="e.g. 100" @change="handleFunderChange" >
+                    <input type="number" :name="ArrName('individual', 'amount_donated', key)" :value="individual.amount_donated" placeholder="e.g. 100" @change="handleFunderChange" >
                 </form>
                 <div class="funder-controls" >
                     <button class="add-staff" @click.prevent="handleFunderClick('add', 'individual')" ><span>+</span></button>
@@ -83,7 +91,7 @@ k<template>
                 </div>
             </div>
         </div>
-        <button class="org-submit" @click.prevent="handleSubmit" >Submit</button>
+        <button class="org-submit" @click.prevent="handleSubmit" >Save</button>
     </div>
 </template>
 
@@ -93,21 +101,22 @@ import {auth, db, storage} from '../main'
 export default {
     data: function() {
         return {
-            institutionalArr: [0],
-            individualArr: [0],
-            staffArr: [0],
-            name: null,
-            about: null,
             file: null,
             staff: [{name: null, role: null}],
             institutional: [{name: null, amount_donated: null}],
             individual: [{name: null, amount_donated: null}],
-            funder_title: null,
-            funder_text: null,
+            organization: {funders: {text: null, title_text: null}},
             uploadedFilename: "",
             imageUploaded: false,
-            imageUrl: null,
-            imagePath: null,
+        }
+    },
+    props: ['user'],
+    firestore () {
+        return {
+            organization: db.collection("users").doc(this.$route.params.uid).collection("organizations").doc(this.$route.params.id),
+            institutional: db.collection("users").doc(this.$route.params.uid).collection("organizations").doc(this.$route.params.id).collection("institutional"),
+            individual: db.collection("users").doc(this.$route.params.uid).collection("organizations").doc(this.$route.params.id).collection("individual"),
+            staff: db.collection("users").doc(this.$route.params.uid).collection("organizations").doc(this.$route.params.id).collection("staff")
         }
     },
     computed: {
@@ -120,19 +129,28 @@ export default {
         },
         hideUploaded: function() {
             return !this.imageUploaded
+        },
+        noImage: function () {
+            return this.organization.image ? false : true;
+        },
+        imageStyle: function() {
+            return {
+                backgroundImage: `url(${this.organization.image})`
+            }
         }
     },
     methods: {
         ArrName: function(type, subType, index) {
             return `${type}-${subType}-` + index.toString()
         },
+        handleBack: function() {
+            this.$router.go(-1)
+        },
         handleStaffClick: function(type) {
             let emptyStaff = {name: null, role: null}
             if (type === "add") {
-                this.staffArr.push(0)
                 this.staff.push(emptyStaff)
             } else {
-                this.staffArr.pop()
                 this.staff.pop()
             }
         },
@@ -142,7 +160,7 @@ export default {
         },
         handleChange: function(event) {
             const key = event.target.name
-            this[key] = event.target.value
+            this.organization[key] = event.target.value
         },
         handleStaffChange: function(event) {
             const nameArr = event.target.name.split('-')
@@ -152,18 +170,14 @@ export default {
             this.staff[index][key] = value
         },
         handleFunderClick: function(action, type) {
-            let emptyFunder = {name: null, amount_donated: null}
+            let emptyFunder = {name: null, amount_donated: null, id: null}
             if (action === "add" && type === "institution") {
-                this.institutionalArr.push(0)
                 this.institutional.push(emptyFunder)
             } else if (action === "subtract" && type ==="institution") {
-                this.institutionalArr.pop()
                 this.institutional.pop()
             } else if (action === "add" && type === "individual") {
-                this.individualArr.push(0)
                 this.individual.push(emptyFunder)
             } else if (action === "subtract" && type ==="individual") {
-                this.individualArr.pop()
                 this.individual.pop()
             }
         },
@@ -175,90 +189,67 @@ export default {
             const value = key === "name" ? event.target.value : parseInt(Number(event.target.value.replace(/[^0-9\.-]+/g,"")))
             this[type][index][key] = value
         },
-        handleSubmit: function() {
-            console.log(db)
-            let data = {
-                staff: this.staff,
-                name: this.name,
-                about: this.about,
-                imagePath: this.imagePath,
-                imageUrl: this.imageUrl,
-                institutional: this.institutional,
-                individual: this.individual,
-                funderTitle: this.funder_title,
-                funderText: this.funder_text
-            }
-            const currentUser = auth.currentUser
-            const uid = currentUser.uid
-            db.collection("users")
-                .doc(`${uid}`)
-                .collection("organizations")
-                .add({
-                    name: data.name,
-                    about: data.about,
-                    image: data.imageUrl,
-                    imagePath: data.imagePath,
-                    funders: {
-                        text: data.funderText,
-                        title_text: data.funderTitle,
-                    }
+        handleSubmit: async function() {
+            const uid = this.$route.params.uid
+            const orgId = this.$route.params.id
+            const orgRef = db.collection("users").doc(uid).collection("organizations").doc(orgId)
+            const staffRef = orgRef.collection("staff")
+            const institutional = orgRef.collection("institutional")
+            const individual = orgRef.collection("individual")
+            let batch = db.batch()
+
+            batch.set(orgRef, this.organization)
+            this.staff.forEach((member, index) => {
+                let staffId = null
+                if(member.id) {
+                    staffId = member.id
+                } else {
+                    staffId = (+new Date()).toString() + "-" + index.toString()
+                    member.id = staffId
+                }
+                const ref = staffRef.doc(staffId)
+                if(member.name && member.role) {
+                    batch.set(ref, member)
+                }
                 })
-                .then(org => {
-                    const docId = org.id
-                    org.set({
-                        id: docId
-                    }, {merge: true})
-                    return org.collection('staff')
-                })
-                .then(staffRef => {
-                    let batch = db.batch()
-                    const org = staffRef.parent
-                    data.staff.forEach((member, index) => {
-                        const staffId = (+new Date()).toString() + "-" + index.toString()
-                        const ref = staffRef.doc(staffId)
-                        const payload = {
-                            name: member.name,
-                            role: member.role,
-                            index: index,
-                            id: staffId
-                            }
-                        batch.set(ref, payload)
-                        })
-                    data.institutional.forEach((funder, index) => {
-                        const InstId = (+new Date()).toString() + "-" + index.toString()
-                        const institutional = org.collection('institutional')
-                        const ref = institutional.doc(InstId)
-                        const payload = {
-                            name: funder.name,
-                            amount_donated: funder.amount_donated,
-                            id: InstId
-                        }
-                        batch.set(ref, payload)
-                    })
-                    data.individual.forEach((donor, index) => {
-                        const IndId = (+new Date()).toString() + "-" + index.toString()
-                        const individual = org.collection('individual')
-                        const ref = individual.doc(IndId)
-                        const payload = {
-                            name: donor.name,
-                            amount_donated: donor.amount_donated,
-                            id: IndId
-                        }
-                        batch.set(ref, payload)
-                    })
-                    return batch.commit();
-                })
+            this.institutional.forEach((funder, index) => {
+                let InstId = null
+                if(funder.id) {
+                    InstId = funder.id
+                } else {
+                    InstId = (+new Date()).toString() + "-" + index.toString()
+                    funder.id = InstId
+                }
+                const ref = institutional.doc(InstId)
+                if (funder.name && funder.amount_donated) {
+                    batch.set(ref, funder)
+                }
+            })
+            this.individual.forEach((donor, index) => {
+                let IndId = null
+                if (donor.id) {
+                    IndId = donor.id
+                } else {
+                    IndId = (+new Date()).toString() + "-" + index.toString()
+                    donor.id = IndId
+                }
+                const ref = individual.doc(IndId)
+                if (donor.name && donor.amount_donated) {
+                    batch.set(ref, donor)
+                }
+            })
+            return batch.commit()
                 .then(() => {
                     console.log("added to firestore")
-                })
-                .catch(error => console.log(error))
+                    this.$router.go(-1)
+                })    
         },
         handleUploadClick: function(event) {
             const ref = storage.ref()
             const name = (+new Date()) + '-' + this.file.name;
             const uid = auth.currentUser.uid
             const path = "images/" + uid + "/" + name
-            this.imagePath = path
+            this.organization.imagePath = path
             const metadata = {
             contentType: this.file.type
             };
@@ -266,10 +257,10 @@ export default {
             task
                 .then(snapshot => snapshot.ref.getDownloadURL())
                 .then((url) => {
-                    this.imageUrl = url
+                    this.organization.image = url
                     this.imageUploaded = true;
                     this.uploadedFilename = this.file.name;
-                    console.log(this.imageUrl);
+                    console.log(this.organization.image);
                 })
                 .catch(console.error);
         },
@@ -300,6 +291,68 @@ export default {
     font-family: $body-font;
     font-size: 14px;
     text-align: left;
+    width: 90%;
+    position: relative;
+    left: 5%;
+
+    .back {
+        width: 50px;
+        height: 50px;
+        margin-bottom: 16px;
+        position: relative;
+    }
+
+    .btn {
+        border: 0;
+        background-color: $gray;
+        border: none;
+        font-family: $body-font;
+        text-align: center;
+        font-size: 14px;
+        font-weight: 900;
+        text-transform: uppercase;
+        color: $white;
+        opacity: 1;
+        transition: background-color .3s, opacity .6s, color .3s;
+        &.hide {
+            display: none;
+            opacity: 0;
+        }
+        &:hover {
+            background-color: $yellow;
+            color: $black;
+        } 
+    }
+
+    .art-image {
+        display: inline-block;
+        width: 75%;
+        height: 300px;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size:cover;
+        position: relative;
+        .image-trash {
+            color: $white;
+            font-size: 14px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            border: 1px $gray solid;
+            background-color: $gray;
+            padding-left: 8px;
+            transition: border .3s, background-color .3s, color .3s;
+            &:hover {
+                color: $black;
+                background-color: $yellow;
+                border: 1px $yellow solid;
+            }
+        }
+    }
+
     .hide {
         display:none;
     }
@@ -321,6 +374,10 @@ export default {
             padding-top: 5px;
         }
         &.funder-text {
+            vertical-align: top;
+            padding-top: 5px;
+        }
+        &.art-label {
             vertical-align: top;
             padding-top: 5px;
         }
@@ -464,6 +521,21 @@ export default {
             background-color: $yellow;
             color: $black;
         }
+    }
+}
+
+@media (min-width: 500px) {
+    .org-form {
+        width: 50%;
+        position: relative;
+        left: 25%;
+    }
+}
+
+@media(min-width: 1000px ) {
+    .org-form {
+        width: 720px;
+        left: calc(50% - (720px/2))
     }
 }
 </style>

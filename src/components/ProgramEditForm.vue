@@ -1,55 +1,44 @@
 <template>
     <div class="program-form" >
-        <h2>New Program</h2>
+        <button class="back btn" @click.prevent="handleBack" >
+            <font-awesome-icon icon="arrow-left" ></font-awesome-icon>
+        </button>
+        <h2>Edit Program</h2>
         <form class="info" >
             <label for="title">Title</label>
             <input type="text" name="title" :value="program.title" @change="handleChange" >
             <label for="hide_title">Hide Title?:</label>
-            <input type="checkbox" name="hide_title" :value="program.hide_title" class="checkbox" @change="handleCheckbox" >
+            <input type="checkbox" name="hide_title" :value="program.hide_title" class="checkbox" @change="handleChange" >
             <label for="subtitle">Sub-Title</label>
             <input type="text" name="subtitle" :value="program.subtitle" @change="handleChange" >
-            <label for="image">
+            <label for="image" class="art-label">
                 Program Art
             </label>
-            <div class="main-upload-container" v-if="showImageUpload">
-                <input class="image-upload" type="file" name="image" @change="handleFileSelect" >
-                <button v-if="showMainUploadBtn" class="image-upload-btn" @click.prevent="handleUploadClick" >upload</button>
-            </div>
-            <div class="main-image-uploaded-container" >
-                <span class="uploaded-filename" v-if="showUploadSuccess" >
-                    {{mainUploadedFilename}}
-                </span><button class="image-upload-cancel" @click.prevent="handleUploadCancel" v-if="showUploadSuccess">x</button>
+            <span v-if="noImage" >
+                <div class="main-upload-container" v-if="showImageUpload">
+                    <input class="image-upload" type="file" name="image" @change="handleFileSelect" >
+                    <button v-if="showMainUploadBtn" class="image-upload-btn" @click.prevent="handleUploadClick" >upload</button>
+                </div>
+                <div class="main-image-uploaded-container" >
+                    <span class="uploaded-filename" v-if="showUploadSuccess" >
+                        {{mainUploadedFilename}}
+                    </span><button class="image-upload-cancel" @click.prevent="handleUploadCancel" v-if="showUploadSuccess">x</button>
+                </div>
+            </span>
+            <div class="art-image" :style="artStyle" v-if="program.image" >
+                <button class="image-trash" @click.prevent="handleImageDelete" ><font-awesome-icon icon="trash-alt"></font-awesome-icon> </button>
             </div>
         </form>
-        <div class="credits-container">
-            <div class="creative">  
-                <h3>Creative Team</h3>
-                <credit-edit-form v-for="(credit, key) in creative" :credit="credit" :key="key" :index="key" @credit-change="handleCreditChange" @image-upload="handleCreditUpload" @image-cancel="handleCreditCancel" :type="'creative'"/>
-                <div class="credits-controls" >
-                    <button class="add-credit" @click.prevent="handleCreditClick('add', 'creative')" ><span>+</span></button>
-                    <button class="subtract-credit" @click.prevent="handleCreditClick('subtract', 'creative')" ><span>-</span></button>
-                </div>
-            </div>
-            <div class="cast" >
-                <h3>Cast</h3>
-                <credit-edit-form v-for="(credit, key) in cast" :credit="credit" :key="key" :index="key" @credit-change="handleCreditChange" @image-upload="handleCreditUpload" @image-cancel="handleCreditCancel" :type="'cast'" />
-                <div class="credits-controls" >
-                    <button class="add-credit" @click.prevent="handleCreditClick('add', 'cast')" ><span>+</span></button>
-                    <button class="subtract-credit" @click.prevent="handleCreditClick('subtract', 'cast')" ><span>-</span></button>
-                </div>
-            </div>
-        </div>
         <div class="organization">
             <h4>Organization</h4>
             <div class="org-select-container">
-                <select name="organization" @change="handleChange" >
+                <select name="organization" @change="handleSelectChange" :value="organization" >
                     <option value="" disabled selected>Select Your Organization</option>
                     <option v-for="(organization, key) in organizations" :key="key" :value="key">{{organization.name}}</option>
                 </select>
             </div>
         </div>
-        <div class="current-user" v-if="user" ></div>
-        <button class="program-submit" @click.prevent="handleSubmit" >Submit</button>
+        <button class="program-submit" @click.prevent="handleSubmit" >Save</button>
     </div>
     
 </template>
@@ -59,39 +48,16 @@ import {db, auth, storage} from '../main'
 
 export default {
     components: {
-        CreditEditForm
     },
     props: ['user'],
     data: function() {
         return {
             program: {},
             organizations: [],
-            organization: {},
-            title: null,
+            organization: null,
             main_file: null,
             showImageUpload: true,
-            mainImageUrl: null,
-            subtitle: null,
             mainUploadedFilename: null,
-            hideTitle: null,
-            creative: [{
-                name: null,
-                role: null,
-                credited_role: null,
-                featured: null,
-                bio: null,
-                image: null,
-                link: null,
-            }],
-            cast: [{
-                name: null,
-                role: null,
-                credited_role: null,
-                featured: null,
-                bio: null,
-                image: null,
-                link: null,
-            }] 
         }
     },
     computed: {
@@ -100,78 +66,89 @@ export default {
         },
         showUploadSuccess: function() {
             return !this.showImageUpload
-        }
-    },
-    watched: {
-        program: function() {
-
+        },
+        artStyle: function() {
+            return {
+                backgroundImage: `url(${this.program.image})`
+            }
+        },
+        noImage: function() {
+            return this.program.image ? false : true;
+        },
+        storedImagePath: function() {
+            let url = this.program.image
+            let rawPath = url.substring(url.indexOf("images"), url.indexOf("?alt")).trim()
+            let path = rawPath.replace(/%2F/g, '/')
+            return path
         }
     },
     firestore () {
         return {
             program: db.collection('programs').doc(this.$route.params.id),
             organizations: db.collection("users").doc(this.user.uid.toString()).collection("organizations"),
-            creative: db.collection('programs').doc(this.$route.params.id).collection('creative'),
-            cast:  db.collection('programs').doc(this.$route.params.id).collection('cast')
+        }
+    },
+    watch: {
+        program: function(newState, oldState) {
+            console.log("created with", uid)
+            const uid = newState.uid
+            if (auth.currentUser.uid !== uid) {
+                this.$router.push('/login')
+                console.log("wrong user!")
+            } else {
+                console.log("correct user!")
+            }
+        },
+        organizations: function(newState, oldState) {
+            if (this.program.org_id) {
+                const orgId = this.program.org_id
+                const selectedIndex = newState.findIndex((el) => {
+                    return el.id === orgId
+                })
+                this.organization = selectedIndex
+            }
         }
     },
     methods: {
-        handleCheckbox: function(event) {
-            const value = event.target.value
-            this.hideTitle = value
-        },
-        handleCreditClick: function(action, type) {
-                let emptyCredit = {name: null, role: null, credited_role: null, bio: null, link: null, image: null, featured: null}
-            if (action === "add" && type === "creative") {
-                this.creative.push(emptyCredit)
-            } else if (action === "subtract" && type === "creative") {
-                this.creative.pop()
-            } else if ( action === "add" && type === "cast") {
-                this.cast.push(emptyCredit)
-            } else if (action === "subtract" && type === "cast") {
-                this.creative.pop()
-            }
+        handleBack: function() {
+            this.$router.go(-1)
         },
         handleChange: function(event) {
             const key = event.target.name
             const type = event.target.type
             let value = null
             if (type === "checkbox") {
-               value = event.target.value === "true" ? true : false
+               value = event.target.checked === true ? true : false
             } else if (type === "number") {
                 value = parseInt(event.target.value)
-            } 
+            }
             else {
                 value = event.target.value
             }
-            this[key] = event.target.value
-        },
-        handleCreditChange: function(array){
-            const type = array[0]
-            const key = array[1]
-            const value = array[2]
-            const index = array[3]
-            this[type][index][key] = value
-        },
-        handleCreditCancel: function(array) {
-            const type = array[0]
-            const index = array[1]
-            if (this[type][index]) {
-                this[type][index].image = null
-            } else {
-                console.log("there is no credit at index", index)
-            }
-        },
-        handleCreditUpload: function(payload) {
-            const url = payload[0]
-            const index = payload[1]
-            const type = payload[2]
-            this[type][index].image = url
-            console.log("uploaded image:", url)
+            this.program[key] = value
         },
         handleFileSelect: function(event) {
             const file = event.target.files[0]
             this.main_file = file
+        },
+        handleImageDelete: async function () {
+            const progId = this.$route.params.id
+            const storageRef = storage.ref()
+            const fileRef = storageRef.child(this.storedImagePath)
+            const del = await fileRef.delete()
+            this.program.image = null
+            const update = await db.collection("programs").doc(progId).set(
+                {image: null},
+                {merge: true}
+            )
+
+        },
+        handleSelectChange: function(event) {
+            const key = event.target.name
+            const value = event.target.value
+            this[name] = value
+            const orgId = this.organizations[value].id
+            this.program.org_id = orgId
         },
         handleUploadClick: function(event) {
             const ref = storage.ref()
@@ -186,76 +163,23 @@ export default {
             task
                 .then(snapshot => snapshot.ref.getDownloadURL())
                 .then((url) => {
-                    this.mainImageUrl = url
+                    this.program.image = url
                     this.showImageUpload = false;
                     this.mainUploadedFilename = this.main_file.name;
-                    console.log(this.mainImageUrl);
+                    console.log(this.program.image);
                 })
                 .catch(console.error);
         },
         handleSubmit: function() {
-            let data = {
-                uid: auth.currentUser.uid,
-                title: this.title,
-                hide_title: this.hideTitle,
-                subtitle: this.subtitle,
-                image: this.mainImageUrl,
-                creative: this.creative,
-                cast: this.cast,
-                orgId: this.organizations[this.organization].id
-            }
             const currentUser = auth.currentUser
             const uid = currentUser.uid
+            const progId = this.$route.params.id
             db.collection("programs")
-                .add({
-                    title: data.title,
-                    hide_title: data.hide_title,
-                    subtitle: data.subtitle,
-                    image: data.image,
-                    uid: uid,
-                    org_id: data.orgId
-                })
-                .then(program => {
-                    return program.collection('creative')
-                })
-                .then(creativeRef => {
-                    let batch = db.batch()
-                    const program = creativeRef.parent
-                    const castRef = program.collection('cast')
-                    data.creative.forEach((credit, index) => {
-                        const creditId = (+new Date()).toString() + "-" + index.toString()
-                        const ref = creativeRef.doc(creditId)
-                        const payload = {
-                            name: credit.name,
-                            role: credit.role,
-                            credited_role: credit.credited_role,
-                            featured: credit.featured,
-                            image: credit.image,
-                            link: credit.link,
-                            bio: credit.bio,
-                            index: index
-                            }
-                        batch.set(ref, payload)
-                        })
-                    data.cast.forEach((credit, index) => {
-                        const creditId = (+new Date()).toString() + "-" + index.toString()
-                        const ref = castRef.doc(creditId)
-                        const payload = {
-                            name: credit.name,
-                            role: credit.role,
-                            credited_role: credit.credited_role,
-                            featured: credit.featured,
-                            image: credit.image,
-                            link: credit.link,
-                            bio: credit.bio,
-                            index: index
-                            }
-                        batch.set(ref, payload)
-                        })
-                    return batch.commit();
-                })
+                .doc(progId)
+                .set(this.program)
                 .then(() => {
                     console.log("added to firestore")
+                    this.$router.go(-1)
                 })
                 .catch(error => console.log(error))
         }
@@ -273,6 +197,35 @@ export default {
     width: 90%;
     position: relative;
     left: 5%;
+
+    .back {
+        width: 50px;
+        height: 50px;
+        margin-bottom: 16px;
+        position: relative;
+    }
+
+    .btn {
+        border: 0;
+        background-color: $gray;
+        border: none;
+        font-family: $body-font;
+        text-align: center;
+        font-size: 14px;
+        font-weight: 900;
+        text-transform: uppercase;
+        color: $white;
+        opacity: 1;
+        transition: background-color .3s, opacity .6s, color .3s;
+        &.hide {
+            display: none;
+            opacity: 0;
+        }
+        &:hover {
+            background-color: $yellow;
+            color: $black;
+        } 
+    }
 
     .info {
         margin-bottom: 16px;
@@ -301,11 +254,16 @@ export default {
         display: inline-block;
         width: 25%;
         box-sizing: border-box;
+        padding-right: 5px;
         &.about {
             vertical-align: top;
             padding-top: 5px;
         }
         &.funder-text {
+            vertical-align: top;
+            padding-top: 5px;
+        }
+        &.art-label {
             vertical-align: top;
             padding-top: 5px;
         }
@@ -397,43 +355,34 @@ export default {
             color: $black;
         } 
     }
-
-    .credits-controls {
-        text-align: right;
-    }
-
-    .credits-container {
-        margin-bottom: 10px;
-    }
-
-    button.add-credit, button.subtract-credit {
-        width: 30px;
-        height: 30px;
-        border: 0;
-        background-color: $gray;
-        border: none;
-        font-family: $body-font;
-        text-align: center;
-        font-size: 24px;
-        font-weight: 900;
-        text-transform: uppercase;
-        color: $white;
-        transition: background-color .3s, color .3s;
-        &:hover {
-            background-color: $yellow;
-            color: $black;
+    .art-image {
+        display: inline-block;
+        width: 75%;
+        height: 300px;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size:cover;
+        position: relative;
+        .image-trash {
+            color: $white;
+            font-size: 14px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            border: 1px $gray solid;
+            background-color: $gray;
+            padding-left: 8px;
+            transition: border .3s, background-color .3s, color .3s;
+            &:hover {
+                color: $black;
+                background-color: $yellow;
+                border: 1px $yellow solid;
+            }
         }
     }
-
-    button.add-credit {
-        margin-right: 10px;
-    }
-
-    button.subtract-credit span {
-        position: relative;
-        bottom: 2px;
-    }
-
     .organization {
         .org-select-container {
             select {

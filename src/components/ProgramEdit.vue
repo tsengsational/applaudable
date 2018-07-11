@@ -12,24 +12,24 @@
                 <h1>{{program.title}}</h1>
                 <h4>{{program.subtitle}}</h4>
             </div>
-            <button class="edit-btn" :class="{show: showEditButton.program_edit}">
+            <button class="edit-btn" :class="{show: showEditButton.program_edit}" @click.prevent="handleProgramEdit" >
                 <font-awesome-icon icon="edit" ></font-awesome-icon>
             </button>
 
         </div>
         <div class="featured-creative flex" >
-            <credit v-for="(credit, key) in featuredCreatives" :key="key" :credit="credit" :programId="programId" :creditType="'creative'" :type="'credited_role'" @creditClick="handleCreditClick" :editing="true" ></credit>
+            <credit v-for="(credit, key) in featuredCreatives" :key="key" :credit="credit" :programId="programId" :creditType="'creative'" :type="'credited_role'" :editing="true" @creditClick="handleCreditClick" ></credit>
         </div>
         <div class="regular-creative flex" >
-            <credit v-for="(credit, key) in regularCreatives" :key="key" :credit="credit" :programId="programId" :creditType="'creative'" :type="'credited_role'" @creditClick="handleCreditClick" />
+            <credit v-for="(credit, key) in regularCreatives" :key="key" :credit="credit" :programId="programId" :creditType="'creative'" :type="'credited_role'" :editing="true" @creditClick="handleCreditClick" />
         </div>
         <div class="cast" >
             <h2 class="cast-title" ><span class="text line" >Featuring</span></h2>
             <div class="featured-cast-container flex">
-                <credit v-for="(credit, key) in featuredCast" :key="key" :credit="credit" :programId="programId" :creditType="'cast'" :type="'role'" @creditClick="handleCreditClick" />
+                <credit v-for="(credit, key) in featuredCast" :key="key" :credit="credit" :programId="programId" :creditType="'cast'" :type="'role'" :editing="true" @creditClick="handleCreditClick" />
             </div>
             <div class="regular-cast-container flex" >
-                <credit v-for="(credit, key) in regularCast" :key="key" :credit="credit" :programId="programId" :creditType="'cast'" :type="'role'" @creditClick="handleCreditClick" />
+                <credit v-for="(credit, key) in regularCast" :key="key" :credit="credit" :programId="programId" :creditType="'cast'" :type="'role'" :editing="true" @creditClick="handleCreditClick" />
             </div>
         </div>
         <div class="organization"  >
@@ -39,14 +39,14 @@
                 <p class="org-about" >
                     {{organization.about}}
                 </p>
-                <button class="edit-btn" :class="{show: showEditButton.org_edit}">
-                <font-awesome-icon icon="edit" ></font-awesome-icon>
-            </button>
+                <button class="edit-btn" :class="{show: showEditButton.org_edit}" @click.prevent="handleOrgEdit" >
+                    <font-awesome-icon icon="edit" ></font-awesome-icon>
+                </button>
             </div>
             <div class="org-staff" >
                 <h4>Staff</h4>
                 <div class="org-staff-container flex" >
-                    <credit v-for="(credit, key) in organization.staff" :key="key" :credit="credit" :type="'role'" />
+                    <credit v-for="(credit, key) in staff" :key="key" :credit="credit" :creditType="'staff'" :editing="true" :type="'role'" />
                 </div>
             </div>
             <div class="funders">
@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import {db} from '../main.js'
+import {auth, db} from '../main.js'
 import Credit from './Credit'
 import DisplayModal from './Modal'
 
@@ -84,6 +84,7 @@ export default {
     components: {
         Credit, DisplayModal
     },
+    props: ['user'],
     data: function() {
         return {
             program: {},
@@ -107,7 +108,7 @@ export default {
             }
         }
     },
-    created: function() {
+    mounted: function() {
         this.programId = this.$route.params.id
     },
     firestore() {
@@ -122,6 +123,15 @@ export default {
             if(newState.org_id) {
                 console.log("program loaded!")
                 const uid = newState.uid
+
+                console.log("created with", uid)
+                if (auth.currentUser.uid !== uid) {
+                    this.$router.push('/login')
+                    console.log("wrong user!")
+                } else {
+                    console.log("correct user!")
+                }
+
                 const orgRef = await db.collection('users').doc(uid).collection('organizations').doc(newState.org_id)
                 const orgSnapshot = await orgRef.get()
                 const org = orgSnapshot.data()
@@ -225,6 +235,23 @@ export default {
             handleMouseLeave: function(event) {
                 const className = event.target.classList[0]
                 this.showEditButton[className] = false
+            },
+            handleOrgEdit: function() {
+                const uid = this.user.uid
+                const orgId = this.organization.id
+                const path = {
+                    name: 'editOrg',
+                    params: {
+                        uid: uid,
+                        id: orgId
+                    }
+                }
+                this.$router.push(path)
+
+            },
+            handleProgramEdit: function(event) {
+                const path = {name: "editProgramForm", params: {id: this.$route.params.id}}
+                this.$router.push(path)
             },
             toggleModal: function() {
                 this.modalOpen = !this.modalOpen

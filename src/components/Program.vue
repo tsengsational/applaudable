@@ -12,18 +12,18 @@
             <h4>{{program.subtitle}}</h4>
         </div>
         <div class="featured-creative flex" >
-            <credit v-for="(credit, key) in featuredCreatives" :key="key" :credit="credit" :type="'credited_role'" @creditClick="handleCreditClick" />
+            <credit v-for="(credit, key) in featuredCreatives" :key="key" :credit="credit" :creditType="'creative'" :type="'credited_role'" :editing="false"  @creditClick="handleCreditClick" />
         </div>
         <div class="regular-creative flex" >
-            <credit v-for="(credit, key) in regularCreatives" :key="key" :credit="credit" :type="'credited_role'" @creditClick="handleCreditClick" />
+            <credit v-for="(credit, key) in regularCreatives" :key="key" :credit="credit" :creditType="'creative'" :type="'credited_role'" :editing="false" @creditClick="handleCreditClick" />
         </div>
         <div class="cast" >
             <h2 class="cast-title" ><span class="text line" >Featuring</span></h2>
             <div class="featured-cast-container flex">
-                <credit v-for="(credit, key) in featuredCast" :key="key" :credit="credit" :type="'role'" @creditClick="handleCreditClick" />
+                <credit v-for="(credit, key) in featuredCast" :key="key" :credit="credit" :creditType="'cast'" :type="'role'" :editing="false" @creditClick="handleCreditClick" />
             </div>
             <div class="regular-cast-container flex" >
-                <credit v-for="(credit, key) in regularCast" :key="key" :credit="credit" :type="'role'" @creditClick="handleCreditClick" />
+                <credit v-for="(credit, key) in regularCast" :key="key" :credit="credit" :creditType="'cast'" :type="'role'" :editing="false" @creditClick="handleCreditClick" />
             </div>
         </div>
         <div class="organization" >
@@ -35,7 +35,7 @@
             <div class="org-staff" >
                 <h4>Staff</h4>
                 <div class="org-staff-container flex" >
-                    <credit v-for="(credit, key) in organization.staff" :key="key" :credit="credit" :type="'role'" />
+                    <credit v-for="(credit, key) in staff" :key="key" :credit="credit" :creditType="'staff'" :editing="false" :type="'role'" />
                 </div>
             </div>
             <div class="funders">

@@ -6,7 +6,7 @@
         <div class="name">
             {{credit.name}}
         </div>
-        <button class="edit-btn credit-btn" :class="{show: showEditBtn }" @click="handleEditClick" >
+        <button class="edit-btn credit-btn" :class="{show: showEditBtn }" @click="handleEditClick" v-if="showEditFormBtn" >
                 <font-awesome-icon icon="edit" ></font-awesome-icon>
         </button>
     </div>
@@ -16,7 +16,7 @@
 import {db, storage} from '../main';
 
 export default {
-    props: ["credit", "type", 'editing', 'programId', 'creditType'],
+    props: ["credit", "type", 'editing', 'programId', 'creditType', 'editing'],
     data: function(){
         return {
             showEditBtn: false
@@ -25,6 +25,13 @@ export default {
     computed: {
         displayRole: function() {
             return this.credit[this.type]
+        },
+        showEditFormBtn: function() {
+            if (this.creditType === "cast" || this.creditType === "creative") {
+                return this.editing
+            } else if (this.creditType === "staff") {
+                return false
+            }
         }
     },
     methods: {
@@ -34,10 +41,14 @@ export default {
             this.$router.push({name: "editCredit", params: {id: id, programId: this.programId, creditType: this.creditType}})
         },
         handleMouseEnter: function() {
-            this.showEditBtn = true
+            if(this.editing) {
+                this.showEditBtn = true
+            }
         },
         handleMouseLeave: function() {
-            this.showEditBtn = false
+            if(this.editing) {
+                this.showEditBtn = false
+            }
         }
     }
 }

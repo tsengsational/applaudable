@@ -108,12 +108,7 @@ export default {
                 newPath = '/'
             }
             this.$router.push(newPath)
-                // .then(this.onLoginSuccess.bind(this))
-                // .catch((error) => {
-                // var errorCode = error.code;
-                // var errorMessage = error.message;
-                // this.loginAlert = errorCode + ": " + errorMessage;
-                // });
+
         },
         googleSignIn: function() {
             auth.signInWithPopup(googleProvider)
@@ -178,9 +173,10 @@ export default {
                     font-weight: 900;
                     text-transform: uppercase;
                     color: $white;
-                    transition: background-color .3s;
+                    transition: background-color .3s, color .3s;
                     &:hover {
                         background-color: $yellow;
+                        color: $black;
                     }
                 }
             }
