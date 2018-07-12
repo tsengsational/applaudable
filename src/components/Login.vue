@@ -105,7 +105,7 @@ export default {
             if (this.$route.query.redirect) {
                 newPath = this.$route.query.redirect
             } else {
-                newPath = '/'
+                newPath = '/dashboard'
             }
             this.$router.push(newPath)
 

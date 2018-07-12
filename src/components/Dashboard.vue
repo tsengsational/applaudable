@@ -1,9 +1,13 @@
 <template>
     <div class="dashboard">
         <h1>Welcome, {{user.displayName}}</h1>
+        <div class="programs">
+            <h3>Programs</h3>
+            <dash-program v-for="(program, key) in programs" :key="key" :user="user" :program="program" ></dash-program>
+        </div>
         <div class="organizations" >
             <h3>Organizations</h3>
-            <div v-for="(org, key) in organizations" :key="key" class="organization" >
+            <div v-for="(organization, key) in organizations" :key="key" class="organization" >
                 {{organization.name}}
             </div>
         </div>
@@ -12,26 +16,35 @@
 
 <script>
 import {auth, db} from '../main'
+import DashProgram from './DashProgram'
 
 export default {
-    data: function() {
+    data () {
         return {
-            currentUser: auth.currentUser,
             organizations: [],
-            user: {}
+            programs: []
         }
     },
-    created: function() {
-        const uid = this.currentUser.uid
-        db.collection("users").doc(`${uid}`)
-            .then((user)=> {
-                this.user = user
-                this.organizations = user.collection("organizations")
-            })
+    props: ["user"],
+    components: {
+        DashProgram
+    },
+    firestore () {
+        return {
+            organizations: db.collection("users").doc(this.user.uid).collection("organizations"),
+            programs: db.collection("programs").where("uid", "==", this.user.uid)
+        }
+    },
+    methods: {
+    
     }
 }
 </script>
 
 <style lang="scss">
+    @import '../assets/settings.scss';
 
+    .dashboard {
+
+    }
 </style>
