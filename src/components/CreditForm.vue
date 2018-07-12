@@ -142,6 +142,11 @@ export default {
         box-shadow: 0px 0px 10px $gray;
 
         .credit-inputs {
+            width: 90%;
+            height: 90%;
+            position: relative;
+            top: 5%;
+            left: 5%;
             margin-bottom: 32px;
             label.bio {
                 vertical-align: top;

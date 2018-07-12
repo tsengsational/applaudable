@@ -1,15 +1,35 @@
 <template>
     <div class="program-dash">
-        {{program.title}}
-                <button class="view-btn" @click="handleViewClick" >
-                    View
-                </button>
-                <button class="edit-btn" @click="handleEditClick" >
-                    Edit
-                </button>
-                <button class="delete-btn" >
-                    Delete
-                </button>  
+        <div class="text" @click="handleViewClick" >
+            <h3>
+                {{program.title}}
+            </h3>
+            <h5>
+                {{program.subtitle}}
+            </h5>
+        </div>
+        <div class="image" :style="imageStyle">
+        </div>
+        <div class="button-container" :class="{open: menuOpen}">
+            <button class="menu-btn" @click="toggleMenuOpen" >
+                <font-awesome-icon icon="ellipsis-v" ></font-awesome-icon>
+            </button>
+            <button class="view-btn" @click="handleLinkClick" @mouseenter="handleLinkEnter" @mouseleave="handleLinkLeave" >
+                <font-awesome-icon icon="link" ></font-awesome-icon>
+                <input class="link" :value="url" >
+                <div class="tooltip-container">
+                    <div class="tooltip" :class="{alert: alert}" >
+                        {{tooltip}}
+                    </div>
+                </div>
+            </button>
+            <button class="edit-btn" @click="handleEditClick" >
+                <font-awesome-icon icon="edit" ></font-awesome-icon>
+            </button>
+            <button class="delete-btn" >
+                <font-awesome-icon icon="trash-alt" ></font-awesome-icon>
+            </button>  
+        </div>
     </div>
 </template>
 
@@ -17,10 +37,23 @@
 export default {
     data() {
         return {
-
+            menuOpen: false,
+            tooltip: "click to copy link",
+            alert: false
         }
     },
     props: ['program', 'user'],
+    computed: {
+        imageStyle () {
+            return {
+                backgroundImage: `url(${this.program.image})`
+            }
+        },
+        url () {
+
+            return `${process.env.VUE_APP_ROOT_PATH}/programs/${this.program.id}`
+        }
+    },
     methods: {
         handleEditClick() {
             const path = {
@@ -31,6 +64,23 @@ export default {
             }
             this.$router.push(path)
         },
+        handleLinkClick(event) {
+            const copyText = event.target.querySelector(".link")
+            copyText.select()
+            document.execCommand("copy")
+            this.tooltip = "url copied"
+        },
+        handleLinkEnter() {
+            console.log("entering")
+            this.alert = true
+        },
+        handleLinkLeave() {
+            console.log("leaving")
+            this.alert = false
+            setTimeout( () => {
+                this.tooltip = "click to copy link"
+            }, 300)
+        },
         handleViewClick() {
             const path = {
                 name: "viewProgram",
@@ -39,6 +89,9 @@ export default {
                 }
             }
             this.$router.push(path)
+        },
+        toggleMenuOpen() {
+            return this.menuOpen = !this.menuOpen
         }
     }
     
@@ -47,10 +100,171 @@ export default {
 
 <style lang="scss">
     @import '../assets/settings.scss';
+
+    .program-dash {
+        width: 85%;
+        height: 195px;
+        position: relative;
+        left: 5%;
+        padding: 8px;
+        box-sizing: border-box;
+        border: 1px $gray solid;
+        background-color: $white;
+        box-shadow: 2px 1px 1px rgba(0,0,0,0.15);
+
+        &::before, &::after {
+            content: "";
+            box-shadow: 2px 1px 1px rgba(0,0,0,0.15);
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #eee;
+        }
+
+        &::before {
+            left: 7px;
+            top: 5px;
+            z-index: -1;
+        }
+
+        &::after {
+            left: 12px;
+            top: 10px;
+            z-index: -2;
+        }
+
+        h3 {
+            margin-bottom: 8px;
+        }
+        h5 {
+            margin-top: 0px;
+        }
+
+        .text {
+            display: inline-block;
+            width: 60%;
+            vertical-align: top;
+            cursor: pointer;
+            padding: 0 10px;
+            box-sizing: border-box;
+            transition: color .3s;
+            &:hover {
+                color: $yellow;
+            }
+        }
+
+        .image {
+            width: 40%;
+            height: 150px;
+            background-size: cover;
+            display: inline-block;
+        }
+        .button-container {
+            margin-top: 8px;
+            position: relative;
+            .menu-btn, .view-btn, .edit-btn, .delete-btn {
+                position: absolute;
+                @include button(40px, 40px, 14px);
+                margin: 0 5px;
+                border-radius: 50%;
+                right: 0px;
+                transition: transform .4s, opacity .4s, background-color .3s, color .3s;
+            }
+            input.link {
+                position: fixed;
+                top: -100vh;
+            }
+            .tooltip {
+                position: absolute;
+                display: flex;
+                align-items:center;
+                justify-content: center;
+                padding: 5px 5px;
+                top: -80px;
+                left: -28px;
+                background-color: $yellow;
+                font-family: $body-font;
+                font-size: 11px;
+                text-transform: none;
+                color: black;
+                width: 80px;
+                height: 40px;
+                opacity: 0;
+                transition: opacity .3s;
+                text-align: center;
+                box-sizing: border-box;
+                &.alert {
+                    opacity: 1;
+                }
+                &::after {
+                        content: " ";
+                        position: absolute;
+                        top: 100%; /* At the bottom of the tooltip */
+                        left: 50%;
+                        margin-left: -5px;
+                        border-width: 5px;
+                        border-style: solid;
+                        border-color: $yellow transparent transparent transparent;
+                }
+            }
+
+            .tooltip-container {
+                position: relative;
+            }
+            .view-btn, .edit-btn, .delete-btn {
+                opacity: 0;
+            }
+            .menu-btn {
+                z-index: 2;
+            }
+
+            &.open {
+                .view-btn {
+                    transform: translate(-50px);
+                    opacity: 1;
+                }
+                .edit-btn {
+                    transform: translate(-100px);
+                    opacity: 1;
+                }
+                .delete-btn {
+                    transform: translate(-150px);
+                    opacity: 1;
+                }
+            }
+
+        }
+    }
     
-    .view-btn, .edit-btn, .delete-btn {
-        @include button(100px, 40px);
-        margin: 0 10px;
+    @media (min-width: 500px) {
+        .program-dash {
+            display: inline-block;
+            width: 300px;
+            height: 400px;
+            left: 0;
+            margin: 0 32px 32px;
+            h3, h5 {
+                display: block;
+            }
+            .text {
+                width: 80%;
+                display: block;
+                position: relative;
+                left: 10%;
+            }
+            .image {
+                display: block;
+                width: 150px;
+                height: 220px;
+                position: relative;
+                left: calc((150px/2) - 8px);
+                background-size: cover;
+                background-position: center;
+            }
+            .menu-btn, .view-btn, .edit-btn, .delete-btn {
+                bottom: -57px;
+            }
+        }
     }
 
 </style>

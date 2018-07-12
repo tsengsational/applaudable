@@ -67,6 +67,7 @@ export default {
             z-index: 2;
             bottom: 0;
             right: 0;
+            padding-left: 8px
         }
         .credited-role {
             text-transform: uppercase;
