@@ -4,3 +4,27 @@ $yellow: #ffbd00;
 $black: #000;
 $white: #fff;
 $gray: #b9bfc5;
+
+@mixin button($width, $height) {
+    width: $width;
+    height: $height;
+    border: 0;
+    background-color: $gray;
+    border: none;
+    font-family: $body-font;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: $white;
+    opacity: 1;
+    transition: background-color .3s, opacity .6s, color .3s;
+    &.hide {
+        display: none;
+        opacity: 0;
+    }
+    &:hover {
+        background-color: $yellow;
+        color: $black;
+    } 
+}
