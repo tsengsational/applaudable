@@ -5,7 +5,7 @@ $black: #000;
 $white: #fff;
 $gray: #b9bfc5;
 
-@mixin button($width, $height) {
+@mixin button($width, $height, $font-size) {
     width: $width;
     height: $height;
     border: 0;
@@ -13,7 +13,7 @@ $gray: #b9bfc5;
     border: none;
     font-family: $body-font;
     text-align: center;
-    font-size: 14px;
+    font-size: $font-size;
     font-weight: 900;
     text-transform: uppercase;
     color: $white;

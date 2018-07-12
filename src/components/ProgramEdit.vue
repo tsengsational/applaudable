@@ -1,5 +1,5 @@
 <template>
-    <div class="program">
+    <div class="program-edit-view">
         <display-modal :modalCredit="modalCredit" :modal-open="modalOpen" @modalClose="toggleModal" />
         <div class="presenter">
             <h3>Presented by {{organization.name}}</h3>
@@ -262,7 +262,7 @@ export default {
 
 <style lang="scss">
     @import '../assets/settings.scss';
-    .program {
+    .program-edit-view {
         .program_edit, .credit_container, .org_edit {
             position: relative;
         }
@@ -302,7 +302,7 @@ export default {
             opacity: 0;
             color: $white;
             text-align:center;
-            padding-left: 10px;
+            padding-left: 8px;
             transition: opacity .3s, background-color .3s, color .3s, border .3s;
             &.show {
                 opacity: 1;
@@ -382,13 +382,23 @@ export default {
     }
 
     @media (min-width: 500px) {
-        .program {
+        .program-edit-view {
             width: 700px;
             position: relative;
             left: calc(50vw - 350px);
             .art img {
                 max-width: 700px;
                 max-height: 450px;
+            }
+        }
+    }
+
+    @media (min-width: 1000px) {
+        .program-edit-view {
+            .program-edit {
+                width: 700px;
+                position: relative;
+                left: calc( 50vw - 350px);
             }
         }
     }

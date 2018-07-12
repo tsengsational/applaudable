@@ -194,6 +194,8 @@ export default {
                 .catch(console.error);
         },
         handleSubmit: function() {
+            const created = new Date
+
             let data = {
                 uid: auth.currentUser.uid,
                 title: this.title,
@@ -202,7 +204,8 @@ export default {
                 image: this.mainImageUrl,
                 creative: this.creative,
                 cast: this.cast,
-                orgId: this.organizations[this.organization].id
+                orgId: this.organizations[this.organization].id,
+                created_at: created
             }
             const currentUser = auth.currentUser
             const uid = currentUser.uid
@@ -213,7 +216,8 @@ export default {
                     subtitle: data.subtitle,
                     image: data.image,
                     uid: uid,
-                    org_id: data.orgId
+                    org_id: data.orgId,
+                    created_at: data.created_at
                 })
                 .then(program => {
                     return program.collection('creative')
@@ -258,6 +262,7 @@ export default {
                 })
                 .then(() => {
                     console.log("added to firestore")
+                    this.$router.go(-1)
                 })
                 .catch(error => console.log(error))
         }
