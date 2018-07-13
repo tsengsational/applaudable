@@ -26,20 +26,40 @@
             <button class="edit-btn" @click="handleEditClick" >
                 <font-awesome-icon icon="edit" ></font-awesome-icon>
             </button>
-            <button class="delete-btn" >
+            <button class="delete-btn" @click="handleDeleteClick" >
                 <font-awesome-icon icon="trash-alt" ></font-awesome-icon>
             </button>  
+        </div>
+        <div class="trash-modal-container" v-if="trashConfirm" :class="{open: trashOpen}">
+            <div class="trash-modal-background"></div>
+            <div class="trash-modal" >
+                <button class="close-modal" @click="handleDeleteClose">
+                    <font-awesome-icon icon="times" ></font-awesome-icon>
+                </button>
+                <span class="close-modal-text">
+                    Are you sure?
+                </span>
+                <button class="delete-btn" @click="handleDeleteSubmit">
+                    <font-awesome-icon icon="trash-alt"></font-awesome-icon>
+                    DELETE
+                </button>
+            </div>
+
         </div>
     </div>
 </template>
 
 <script>
+import {db, storage} from '../main.js'
+
 export default {
     data() {
         return {
             menuOpen: false,
             tooltip: "click to copy link",
-            alert: false
+            alert: false,
+            trashConfirm: false,
+            trashOpen: false
         }
     },
     props: ['program', 'user'],
@@ -63,6 +83,51 @@ export default {
                 }
             }
             this.$router.push(path)
+        },
+        handleDeleteClick() {
+            this.trashConfirm = true
+            setTimeout(()=> {
+                this.trashOpen = true
+            }, 100)
+        },
+        handleDeleteClose() {
+            this.trashOpen = false
+            setTimeout(() => {
+                this.trashConfirm = false
+            }, 600)
+        },
+        handleDeleteSubmit: async function() {
+            const programRef = db.collection("programs").doc(this.program.id)
+            const creativeRef = programRef.collection("creative")
+            const storageRef = storage.ref()
+            let batch = db.batch()
+            const creativeQuery = await creativeRef.get()
+            creativeQuery.forEach((creative) => {
+                if (creative.data.imagePath) {
+                    const imageRef = storageRef.child(creative.data.imagePath)
+                    imageRef.delete()
+                    batch.delete(creative)
+                }
+            })
+            const castRef = programRef.collection("cast")
+            const castQuery = await castRef.get()
+            castQuery.forEach((cast) => {
+                if (cast.data.imagePath) {
+                    const imageRef = storageRef.child(creative.data.imagePath)
+                    imageRef.delete()
+                    batch.delete(cast)     
+                }
+            } )
+            if (this.program.image) {
+                const rawPath = this.program.image.substring(this.program.image.indexOf("images"), this.program.image.indexOf("?alt")).trim()
+                const path = rawPath.replace(/%2F/g, '/')
+                storageRef.child(path).delete()
+            }
+            batch.delete(programRef)
+            batch.commit()
+                .then(() => {
+                    console.log("batch committed")
+                })
         },
         handleLinkClick(event) {
             const copyText = event.target.querySelector(".link")
@@ -98,7 +163,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
     @import '../assets/settings.scss';
 
     .program-dash {
@@ -111,6 +176,8 @@ export default {
         border: 1px $gray solid;
         background-color: $white;
         box-shadow: 2px 1px 1px rgba(0,0,0,0.15);
+        margin-bottom: 32px;
+        overflow: hidden;
 
         &::before, &::after {
             content: "";
@@ -157,6 +224,7 @@ export default {
             width: 40%;
             height: 150px;
             background-size: cover;
+            background-position: center;
             display: inline-block;
         }
         .button-container {
@@ -172,7 +240,9 @@ export default {
             }
             input.link {
                 position: fixed;
-                top: -100vh;
+                right: -100vw;
+                // visibility:hidden;
+                
             }
             .tooltip {
                 position: absolute;
@@ -232,7 +302,60 @@ export default {
                     opacity: 1;
                 }
             }
+        }
 
+        .trash-modal-container {
+            .trash-modal-background {
+                opacity: 0;
+                transition: opacity .6s;
+                background-color: $black;
+                position: fixed;
+                height: 100vh;
+                width: 100vw;
+                top: 0;
+                left: 0;
+                z-index: 5;
+            }
+            .trash-modal {
+                background-color: $white;
+                width: 250px;
+                height: 120px;
+                position: fixed;
+                z-index: 5;
+                top: calc(50vh - 60px);
+                left: calc(50vw - 125px);
+                opacity: 0;
+                transition: opacity .6s;
+                font-family: $body-font;
+                .close-modal {
+                    position: absolute;
+                    top: 5px;
+                    left: 5px;
+                    padding-left: 5px;
+                    @include button (20px, 20px, 14px)
+                }
+                span.close-modal-text {
+                    display: block;
+                    position: relative;
+                    top: calc(50% - 10px);
+                    text-align: center;
+                }
+                button.delete-btn {
+                    @include button (100px, 30px, 12px);
+                    display: block;
+                    position: absolute;
+                    bottom: 10px;
+                    left: calc(50% - 50px);
+                }
+            }
+            &.open {
+                .trash-modal-background {
+                    opacity: .5;
+                }
+                .trash-modal {
+                    opacity: 1;
+                }
+            }
         }
     }
     

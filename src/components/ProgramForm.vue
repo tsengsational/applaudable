@@ -220,6 +220,8 @@ export default {
                     created_at: data.created_at
                 })
                 .then(program => {
+                    const id = program.id
+                    program.set({id: id}, {merge: true})
                     return program.collection('creative')
                 })
                 .then(creativeRef => {
