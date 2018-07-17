@@ -96,10 +96,6 @@ export default {
                 {
                     title: "Sign in",
                     path: "/login"
-                },
-                {
-                    title: "Test",
-                    path: "/test"
                 }
             ]
         }
@@ -141,6 +137,10 @@ export default {
         .logo-container, .router-links, .logo, .logo-text {
             display: inline-block;
             vertical-align: middle;
+        }
+        .router-links {
+            font-family: $body-font;
+            font-size: 12px;
         }
         .logo-container {
             position: absolute;

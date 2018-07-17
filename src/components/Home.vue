@@ -6,6 +6,7 @@
                 <h1>Never printing a program again? Bravo.</h1>
                 <h3>Easy mobile-optimized programs for any event</h3>
                 <button @click="handleSignUpClick" >Sign Up</button>
+                <button @click.prevent="handleTestClick" >Live Preview</button>
             </div>
         </div>
         <div class="feature-container flex" >
@@ -73,6 +74,12 @@ export default {
                 }
             }
             this.$router.push(path)
+        },
+        handleTestClick() {
+            const path = {
+                name: 'program-test'
+            }
+            this.$router.push(path)
         }
     }
 
@@ -119,7 +126,8 @@ export default {
                 font-family: $body-font;
             }
             button {
-                @include button (150px, 40px, 12px)
+                @include button (140px, 40px, 12px);
+                margin: 0 5px;
             }
         }
     }
