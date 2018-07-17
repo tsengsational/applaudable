@@ -75,7 +75,7 @@ export default {
         width: 80%;
         position: relative;
         left: 10%;
-        padding-top: 32px;
+        padding-top: 44px;
         .programs, .organizations {
             h3 {
                 display: inline-block;

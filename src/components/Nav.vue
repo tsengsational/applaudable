@@ -64,9 +64,15 @@
                 </div>
             </div>
             <div class="router-links" >
-                <router-link v-for="(link, key) in links" :key="key" tag="a" class="router-link" :to="link.path" >
+                <router-link v-for="(link, key) in links" :key="key" tag="a" v-if="showSignIn" class="router-link" :to="link.path" >
                     <a>{{link.title}}</a>
                 </router-link>
+                <router-link tag="a" class="router-link" to="/dashboard" v-if="user.uid" >
+                    <a>Dashboard</a>
+                </router-link>
+                <div class="router-link sign-out" @click="signOut" v-if="user.uid" >
+                    <a>Sign Out</a>
+                </div>
             </div>
             <button class="menu-btn" @click="handleMenuClick" v-bind:class="{menuOpen: menuOpen}">
                 <div class="menu-top"></div>
@@ -74,25 +80,23 @@
                 <div class="menu-btm"></div>
             </button>
         </div>
-        <Menu :links="links" :menuOpen="menuOpen" />
+        <Menu :links="links" :menuOpen="menuOpen" :user="user" />
     </div>
 </template>
 
 <script>
 import Menu from './Menu'
+import {auth} from '../main.js'
 
 export default {
     components: {
         Menu
     },
+    props: ['user'],
     data: function() {
         return {
             menuOpen: false,
             links: [
-                {
-                    title: "Home",
-                    path: "/"
-                },
                 {
                     title: "Sign in",
                     path: "/login"
@@ -106,6 +110,9 @@ export default {
         },
         background: function () {
             return require('../assets/' + this.id + '.svg')
+        },
+        showSignIn () {
+            return this.user.uid == null ? true : false;
         }
     },
     methods: {
@@ -117,8 +124,15 @@ export default {
                 name: "home"
             }
             this.$router.push(path)
+        },
+        signOut: function() {
+            auth.signOut().then(function() {
+            console.log("signed out")
+            }).catch(function(error) {
+            throw error
+            });
         }
-    }     
+    },    
 }
 </script>
 
@@ -141,6 +155,9 @@ export default {
         .router-links {
             font-family: $body-font;
             font-size: 12px;
+        }
+        .router-link {
+            display: inline-block;
         }
         .logo-container {
             position: absolute;
