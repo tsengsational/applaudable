@@ -263,6 +263,8 @@ export default {
 <style lang="scss">
     @import '../assets/settings.scss';
     .program-edit-view {
+        padding-top: 32px;
+
         .program_edit, .credit_container, .org_edit {
             position: relative;
         }

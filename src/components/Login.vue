@@ -53,6 +53,11 @@ export default {
             return !this.hideLogin;
         }
     },
+    created () {
+        if(this.$route.query.signUp === true) {
+            this.toggleHide()
+        }
+    },
     methods: {
         signUp: function(event) {
             event.preventDefault()

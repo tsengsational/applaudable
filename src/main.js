@@ -7,7 +7,7 @@ import 'firebase/firestore'
 import 'firebase/auth'
 import 'firebase/storage'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faEdit, faTrashAlt, faArrowLeft, faLink, faEllipsisV, faPlus, faMinus, faPlusCircle, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faEdit, faTrashAlt, faArrowLeft, faLink, faEllipsisV, faPlus, faMinus, faPlusCircle, faTimes, faTree, faThumbsUp, faCoins } from '@fortawesome/free-solid-svg-icons'
 import { faComment } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon, FontAwesomeLayers, FontAwesomeLayersText } from '@fortawesome/vue-fontawesome'
 
@@ -20,7 +20,10 @@ library.add(
   faPlus,
   faMinus,
   faPlusCircle,
-  faTimes
+  faTimes, 
+  faTree, 
+  faThumbsUp, 
+  faCoins
 )
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
