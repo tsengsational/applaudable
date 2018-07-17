@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <Nav :user="user" />
-    <div class="router-view-wrapper" >
+    <div class="router-view-wrapper" :class="{home: home}" >
       <router-view :user="user" ></router-view>
     </div>
   </div>
@@ -15,7 +15,12 @@ export default {
   components: {
     Nav
   },
-  props: ['user']
+  props: ['user'],
+  computed: {
+    home() {
+      return this.$route.name === "home" ? true : false;
+    }
+  }
 }
 </script>
 
@@ -37,6 +42,12 @@ body {
 }
 
 .router-view-wrapper {
-  margin: 60px 0 40px;
+  margin: 40px 0;
+}
+
+@media (min-width: 500px) {
+  .router-view-wrapper {
+    margin: 60px 0;
+  }
 }
 </style>

@@ -182,6 +182,7 @@ export default {
 @import '../assets/settings.scss';
 
 div.credit-edit-container {
+    padding-top: 32px;
     margin-bottom: 16px;
     border: 0px $gray solid;
     padding: 32px 0;

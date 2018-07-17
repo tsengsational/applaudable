@@ -208,6 +208,7 @@ export default {
 <style lang="scss">
     @import '../assets/settings.scss';
     .program {
+        padding-top: 32px;
         .cast-title {
             margin-bottom: 5px;
         }

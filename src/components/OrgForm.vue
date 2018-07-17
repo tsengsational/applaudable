@@ -297,6 +297,7 @@ export default {
 @import '../assets/settings.scss';
 
 .org-form {
+    padding-top: 32px;
     font-family: $body-font;
     font-size: 14px;
     text-align: left;

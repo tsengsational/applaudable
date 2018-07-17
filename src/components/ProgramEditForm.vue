@@ -191,6 +191,7 @@ export default {
 @import '../assets/settings.scss';
 
 .program-form {
+    padding-top: 32px;
     font-family: $body-font;
     font-size: 14px;
     text-align: left;
