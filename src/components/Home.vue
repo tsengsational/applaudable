@@ -1,7 +1,7 @@
 <template>
     <div class="home" >
         <div class="hero-container" >
-            <div class="hero" ></div>
+            <div class="hero" :style="heroStyle" ></div>
             <div class="hero-content">
                 <h1>Never printing a program again? Bravo.</h1>
                 <h3>Easy mobile-optimized programs for any event</h3>
@@ -45,7 +45,16 @@ export default {
                     icon: "coins"
                 }
             ]
-
+        }
+    },
+    computed: {
+        backgroundImage () {
+            return require('../assets/crowd.jpg')
+        },
+        heroStyle () {
+            return {
+                backgroundImage: `url(${this.backgroundImage})`
+            }
         }
     },
     methods: {
@@ -62,6 +71,7 @@ export default {
 
     
 }
+
 </script>
 
 <style lang="scss" scoped>
@@ -75,7 +85,7 @@ export default {
     .hero-container {
         position: relative;
         .hero {
-            background-image: url('/crowd.jpg');
+            // background-image: url('/crowd.jpg');
             background-position: center;
             background-size: cover;
             width: 100vw;
