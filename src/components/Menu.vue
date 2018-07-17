@@ -1,12 +1,12 @@
 <template>
     <div class="menu" :class="{open: menuOpen}" >
-        <router-link v-for="(link, key) in links" :key="key" tag="a" class="router-link" :to="link.path" >
+        <router-link v-for="(link, key) in links" :key="key" tag="a" class="router-link" :to="link.path" v-if="showSignIn">
                 <a>{{link.title}}</a>
         </router-link>
-        <router-link tag="a" class="router-link" to="/dashboard" v-if="user.uid" >
+        <router-link tag="a" class="router-link" to="/dashboard" v-if="loggedIn" >
             <a>Dashboard</a>
         </router-link>
-        <div class="router-link sign-out" @click="signOut" v-if="user.uid" >
+        <div class="router-link sign-out" @click="signOut" v-if="loggedIn" >
             <a>Sign Out</a>
         </div>
     </div>
@@ -17,11 +17,12 @@ import {auth} from '../main';
 
 
 export default {
-    props: ["links", "menuOpen", "user"],
+    props: ["links", "menuOpen", "user", "loggedIn", "showSignIn"],
     methods: {
         signOut: function() {
             auth.signOut().then(function() {
             console.log("signed out")
+            this.$router.push("/")
             }).catch(function(error) {
             throw error
             });
@@ -52,7 +53,7 @@ export default {
             color: $black;
             text-decoration: none;
             transition: color .3s;
-            
+
             &:hover {
                 color: $yellow;
             }

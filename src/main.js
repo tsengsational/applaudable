@@ -52,8 +52,11 @@ new Vue({
   router,
   beforeCreate: function() {
     firebase.auth().onAuthStateChanged(function(user) {
+      console.log('auth change', user)
       if (user) {
         this.user = user
+      } else {
+        this.user = {}
       }
     }.bind(this))
   },
