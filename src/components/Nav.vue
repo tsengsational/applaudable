@@ -2,7 +2,7 @@
     <div class="nav-wrapper" >
         <div class="nav">
             <div class="logo-container" >
-                <div class="logo" >
+                <div class="logo" @click="handleHomeClick" >
                     <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="463.515px" height="409.2px" viewBox="0 0 463.515 409.2" enable-background="new 0 0 463.515 409.2" xml:space="preserve">
                         <g id="Layer_1" display="none">
                             <path display="inline" fill="#AF1212" d="M276.604,94.361v-40.67c0-5.877-4.767-10.64-10.64-10.64
@@ -115,6 +115,12 @@ export default {
     methods: {
         handleMenuClick: function() {
             this.menuOpen = !this.menuOpen
+        },
+        handleHomeClick: function() {
+            const path = {
+                name: "home"
+            }
+            this.$router.push(path)
         }
     }     
 }
@@ -140,6 +146,7 @@ export default {
             position: absolute;
             left: 16px;
             top: 9px;
+            cursor: pointer;
             .logo {
                 svg {
                     height: 25px;

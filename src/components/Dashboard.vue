@@ -1,13 +1,13 @@
 <template>
     <div class="dashboard">
         <h1>Welcome, {{user.displayName}}</h1>
+        
         <div class="programs">
             <h3>Programs</h3>
             <div class="button-container">
                 <button class="add-new-program" @click="handleNewProgram" >
                     <font-awesome-icon icon="plus-circle" ></font-awesome-icon> New Program
                 </button>
-
             </div>
             <div class="programs-flex-container" >
                 <dash-program v-for="(program, key) in programs" :key="key" :user="user" :program="program" ></dash-program>
@@ -15,8 +15,14 @@
         </div>
         <div class="organizations" >
             <h3>Organizations</h3>
-            <div v-for="(organization, key) in organizations" :key="key" class="organization" >
-                {{organization.name}}
+            <div class="button-container">
+                <button class="add-new-org" @click="handleNewOrg" >
+                    <font-awesome-icon icon="plus-circle" ></font-awesome-icon> New Organization
+                </button>
+            </div>
+            <div class="orgs-container">
+                <dash-org v-for="(organization, key) in organizations" :key="key" :user="user" :organization="organization" class="organization" >
+                </dash-org>
             </div>
         </div>
     </div>    
@@ -25,6 +31,7 @@
 <script>
 import {auth, db} from '../main'
 import DashProgram from './DashProgram'
+import DashOrg from './DashOrg'
 
 export default {
     data () {
@@ -35,7 +42,7 @@ export default {
     },
     props: ["user"],
     components: {
-        DashProgram
+        DashProgram, DashOrg
     },
     firestore () {
         return {
@@ -47,6 +54,12 @@ export default {
         handleNewProgram() {
             const path = {
                 name: "newPrograms"
+            }
+            this.$router.push(path)
+        },
+        handleNewOrg() {
+            const path = {
+                name: "newOrganizations"
             }
             this.$router.push(path)
         }
@@ -62,7 +75,7 @@ export default {
         width: 80%;
         position: relative;
         left: 10%;
-        .programs {
+        .programs, .organizations {
             h3 {
                 display: inline-block;
             }
@@ -70,7 +83,7 @@ export default {
         .button-container {
             display: inline-block;
             margin: 0 32px;
-            .add-new-program {
+            .add-new-program, .add-new-org {
                 cursor: pointer;
                 @include button(150px, 40px, 12px)
             }
@@ -79,6 +92,9 @@ export default {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
+            margin: 32px 0;
+        }
+        .orgs-container {
             margin: 32px 0;
         }
     }

@@ -44,7 +44,6 @@
                     DELETE
                 </button>
             </div>
-
         </div>
     </div>
 </template>
@@ -106,8 +105,8 @@ export default {
                 if (creative.data.imagePath) {
                     const imageRef = storageRef.child(creative.data.imagePath)
                     imageRef.delete()
-                    batch.delete(creative)
                 }
+                    batch.delete(creative)
             })
             const castRef = programRef.collection("cast")
             const castQuery = await castRef.get()
@@ -115,8 +114,8 @@ export default {
                 if (cast.data.imagePath) {
                     const imageRef = storageRef.child(creative.data.imagePath)
                     imageRef.delete()
-                    batch.delete(cast)     
                 }
+                    batch.delete(cast)     
             } )
             if (this.program.image) {
                 const rawPath = this.program.image.substring(this.program.image.indexOf("images"), this.program.image.indexOf("?alt")).trim()
@@ -177,7 +176,6 @@ export default {
         background-color: $white;
         box-shadow: 2px 1px 1px rgba(0,0,0,0.15);
         margin-bottom: 32px;
-        overflow: hidden;
 
         &::before, &::after {
             content: "";
@@ -239,10 +237,9 @@ export default {
                 transition: transform .4s, opacity .4s, background-color .3s, color .3s;
             }
             input.link {
-                position: fixed;
-                right: -100vw;
-                // visibility:hidden;
-                
+                z-index: -100;
+                position: absolute;
+                opacity: 0;              
             }
             .tooltip {
                 position: absolute;
