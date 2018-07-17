@@ -49,7 +49,9 @@ export default {
     },
     computed: {
         backgroundImage () {
-            return require('../assets/crowd.jpg')
+            const path = process.env.VUE_APP_ROOT_PATH.substring(0, (process.env.VUE_APP_ROOT_PATH.length - 2))
+
+            return  path + require('../assets/crowd.jpg')
         },
         heroStyle () {
             return {
