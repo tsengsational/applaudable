@@ -67,6 +67,7 @@ export default {
 <style lang="scss" scoped>
     @import '../assets/settings.scss';
     $hero-height: 400px;
+    $hero-height-desktop: 500px;
     .flex {
         display: flex;
     }
@@ -134,6 +135,12 @@ export default {
     }
 
     @media (min-width: 500px) {
+        .hero {
+            height: $hero-height-desktop;
+            &::before {
+                height: $hero-height-desktop;
+            }
+        }
         .feature-container {
             flex-direction: row;
             width: 70vw;
