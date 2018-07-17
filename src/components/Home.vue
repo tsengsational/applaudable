@@ -49,9 +49,14 @@ export default {
     },
     computed: {
         backgroundImage () {
-            const path = process.env.VUE_APP_ROOT_PATH.substring(0, (process.env.VUE_APP_ROOT_PATH.length - 2))
+            let path = null
+            if (process.env.VUE_APP_ROOT_PATH.includes("localhost")){
+                path = ""
+            } else {
+                path = process.env.VUE_APP_ROOT_PATH.substring(0, (process.env.VUE_APP_ROOT_PATH.length - 2))
+            }
 
-            return  path + require('../assets/crowd.jpg')
+            return path + require('../assets/crowd.jpg')
         },
         heroStyle () {
             return {
