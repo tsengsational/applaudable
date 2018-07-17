@@ -25,8 +25,6 @@
 </template>
 
 <script>
-import '../assets/crowd.jpg'
-
 export default {
     data() {
         return {
@@ -76,12 +74,11 @@ export default {
     .hero-container {
         position: relative;
         .hero {
-            background-image: url(../assets/crowd.jpg);
+            background-image: url('/crowd.jpg');
             background-position: center;
             background-size: cover;
             width: 100vw;
             height: $hero-height;
-            // position: relative;
             &::before {
                 content: "";
                 position: absolute;
