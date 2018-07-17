@@ -67,10 +67,10 @@
                 <router-link v-for="(link, key) in links" :key="key" tag="a" v-if="showSignIn" class="router-link" :to="link.path" >
                     <a>{{link.title}}</a>
                 </router-link>
-                <router-link tag="a" class="router-link" to="/dashboard" v-if="user.uid" >
+                <router-link tag="a" class="router-link" to="/dashboard" v-if="loggedIn" >
                     <a>Dashboard</a>
                 </router-link>
-                <div class="router-link sign-out" @click="signOut" v-if="user.uid" >
+                <div class="router-link sign-out" @click="signOut" v-if="loggedIn" >
                     <a>Sign Out</a>
                 </div>
             </div>
@@ -80,7 +80,7 @@
                 <div class="menu-btm"></div>
             </button>
         </div>
-        <Menu :links="links" :menuOpen="menuOpen" :user="user" />
+        <Menu :links="links" :menuOpen="menuOpen" :user="user" :loggedIn="loggedIn" :showSignIn="showSignIn" />
     </div>
 </template>
 
@@ -101,7 +101,24 @@ export default {
                     title: "Sign in",
                     path: "/login"
                 }
-            ]
+            ],
+            showSignIn: true,
+            loggedIn: false
+        }
+
+    },
+    watch: {
+        user: function(newState, oldState) {
+            console.log("new state!", newState.uid)
+            if ( !!newState.uid) {
+                console.log("hiding sign in")
+                this.loggedIn = true
+                this. showSignIn = false
+            } else {
+                console.log('hiding login')
+                this.loggedIn = false
+                this.showSignIn = true
+            }
         }
     },
     computed: {
@@ -110,9 +127,6 @@ export default {
         },
         background: function () {
             return require('../assets/' + this.id + '.svg')
-        },
-        showSignIn () {
-            return this.user.uid == null ? true : false;
         }
     },
     methods: {
@@ -127,7 +141,8 @@ export default {
         },
         signOut: function() {
             auth.signOut().then(function() {
-            console.log("signed out")
+                console.log("signed out")
+                this.$router.push("/")
             }).catch(function(error) {
             throw error
             });
