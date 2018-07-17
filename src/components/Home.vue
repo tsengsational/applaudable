@@ -25,8 +25,6 @@
 </template>
 
 <script>
-import '../assets/crowd.jpg'
-
 export default {
     data() {
         return {
@@ -69,6 +67,7 @@ export default {
 <style lang="scss" scoped>
     @import '../assets/settings.scss';
     $hero-height: 400px;
+    $hero-height-desktop: 500px;
     .flex {
         display: flex;
     }
@@ -76,12 +75,11 @@ export default {
     .hero-container {
         position: relative;
         .hero {
-            background-image: url(../assets/crowd.jpg);
+            background-image: url('/crowd.jpg');
             background-position: center;
             background-size: cover;
             width: 100vw;
             height: $hero-height;
-            // position: relative;
             &::before {
                 content: "";
                 position: absolute;
@@ -137,6 +135,12 @@ export default {
     }
 
     @media (min-width: 500px) {
+        .hero {
+            height: $hero-height-desktop;
+            &::before {
+                height: $hero-height-desktop;
+            }
+        }
         .feature-container {
             flex-direction: row;
             width: 70vw;
