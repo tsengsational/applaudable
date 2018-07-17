@@ -3,7 +3,10 @@
         <router-link v-for="(link, key) in links" :key="key" tag="a" class="router-link" :to="link.path" >
                 <a>{{link.title}}</a>
         </router-link>
-        <div class="router-link sign-out" @click="signOut" >
+        <router-link tag="a" class="router-link" to="/dashboard" v-if="user.uid" >
+            <a>Dashboard</a>
+        </router-link>
+        <div class="router-link sign-out" @click="signOut" v-if="user.uid" >
             <a>Sign Out</a>
         </div>
     </div>
@@ -14,7 +17,7 @@ import {auth} from '../main';
 
 
 export default {
-    props: ["links", "menuOpen"],
+    props: ["links", "menuOpen", "user"],
     methods: {
         signOut: function() {
             auth.signOut().then(function() {
@@ -49,6 +52,7 @@ export default {
             color: $black;
             text-decoration: none;
             transition: color .3s;
+            
             &:hover {
                 color: $yellow;
             }
