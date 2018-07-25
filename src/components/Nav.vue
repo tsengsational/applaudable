@@ -140,7 +140,7 @@ export default {
             this.$router.push(path)
         },
         signOut: function() {
-            auth.signOut().then(function() {
+            auth.signOut().then(() => {
                 console.log("signed out")
                 this.$router.push("/")
             }).catch(function(error) {
