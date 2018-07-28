@@ -11,6 +11,7 @@ import ProgramEdit from './components/ProgramEdit'
 import CreditEditForm from './components/CreditEditForm'
 import ProgramEditForm from './components/ProgramEditForm'
 import OrgEditForm from './components/OrgEditForm'
+import QRCode from './components/QRCode'
 import firebase from 'firebase/app'
 import 'firebase/auth'
 
@@ -68,6 +69,11 @@ export default new Router({
       path: "/programs/:id/",
       name: "viewProgram",
       component: Program
+    },
+    {
+      path: "/programs/:id/qr",
+      name: "QRProgram",
+      component: QRCode
     },
     {
       path: "/programs/:id/edit",

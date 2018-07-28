@@ -26,6 +26,9 @@
             <button class="edit-btn" @click="handleEditClick" >
                 <font-awesome-icon icon="edit" ></font-awesome-icon>
             </button>
+            <button class="qr-btn" @click="handleQrClick" >
+                <font-awesome-icon icon="qrcode" ></font-awesome-icon>
+            </button>
             <button class="delete-btn" @click="handleDeleteClick" >
                 <font-awesome-icon icon="trash-alt" ></font-awesome-icon>
             </button>  
@@ -154,6 +157,15 @@ export default {
             }
             this.$router.push(path)
         },
+        handleQrClick() {
+            const path = {
+                name: "QRProgram",
+                params: {
+                    id: this.program.id
+                }
+            }
+            this.$router.push(path)
+        },
         toggleMenuOpen() {
             return this.menuOpen = !this.menuOpen
         }
@@ -228,7 +240,7 @@ export default {
         .button-container {
             margin-top: 8px;
             position: relative;
-            .menu-btn, .view-btn, .edit-btn, .delete-btn {
+            .menu-btn, .view-btn, .edit-btn, .qr-btn, .delete-btn {
                 position: absolute;
                 @include button(40px, 40px, 14px);
                 margin: 0 5px;
@@ -278,7 +290,7 @@ export default {
             .tooltip-container {
                 position: relative;
             }
-            .view-btn, .edit-btn, .delete-btn {
+            .view-btn, .edit-btn, .qr-btn, .delete-btn {
                 opacity: 0;
             }
             .menu-btn {
@@ -287,15 +299,19 @@ export default {
 
             &.open {
                 .view-btn {
-                    transform: translate(-50px);
+                    transform: translate(-45px);
                     opacity: 1;
                 }
                 .edit-btn {
-                    transform: translate(-100px);
+                    transform: translate(-90px);
+                    opacity: 1;
+                }
+                .qr-btn {
+                    transform: translate(-135px);
                     opacity: 1;
                 }
                 .delete-btn {
-                    transform: translate(-150px);
+                    transform: translate(-180px);
                     opacity: 1;
                 }
             }
@@ -381,7 +397,7 @@ export default {
                 background-size: cover;
                 background-position: center;
             }
-            .menu-btn, .view-btn, .edit-btn, .delete-btn {
+            .menu-btn, .view-btn, .edit-btn, .qr-btn, .delete-btn {
                 bottom: -57px;
             }
         }
