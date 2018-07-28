@@ -2,7 +2,7 @@
     <div class="modal-container" >
         <div class="modal" :class="{open: modalOpen}" >
             <button @click="$emit('modalClose')" class="modal-btn" >X</button>
-            <div class="modal-image" :class="{ hide: hideImage }" :style="styleObject" >
+            <div class="modal-image" :alt="modalCredit.imageAlt" :class="{ hide: hideImage }" :style="styleObject" >
             </div>
             <div class="modal-name" >
                 <a :href="modalCredit.link">{{modalCredit.name}}</a>

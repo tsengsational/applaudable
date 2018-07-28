@@ -43,6 +43,10 @@
             <div class="headshot-image" :style="headshotStyle" v-if="credit.image" >
                 <button class="image-trash" @click.prevent="handleImageDelete" ><font-awesome-icon icon="trash-alt"></font-awesome-icon> </button>
             </div>
+            <label for="imageAlt">
+                Alternate Image Text (optional): 
+            </label>
+            <input type="text" name="imageAlt" :value="credit.imageAlt" placeholder="headshot of actor" @change="handleChange" >
             <button class="save-btn" @click.prevent="handleSave"  >Save</button>
         </form>
     </div>
@@ -56,6 +60,7 @@ export default {
         return {
             credit: {name: null, role: null, credited_role: null, bio: null, image: null, link: null, featured: null, },
             imagePath: null,
+            imageAlt: null,
             file: null,
             uploadedFilename: null,
             imageUploaded: false,
@@ -134,7 +139,6 @@ export default {
         handleSave: function(event) {
             const creditRef = db.collection("programs").doc(this.$route.params.programId).collection(this.$route.params.creditType).doc(this.$route.params.id)
             const payload = this.credit
-            debugger
             creditRef.set(payload)
             this.$router.go(-1)
         },

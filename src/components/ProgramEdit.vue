@@ -301,7 +301,7 @@ export default {
             border-radius: 50%;
             border: 1px $gray solid;
             background-color: $gray;
-            opacity: 0;
+            opacity: 1;
             color: $white;
             text-align:center;
             padding-left: 8px;
@@ -391,6 +391,12 @@ export default {
             .art img {
                 max-width: 700px;
                 max-height: 450px;
+            }
+            button.edit-btn {
+                opacity: 0;
+                &.show {
+                    opacity: 1;
+                }
             }
         }
     }

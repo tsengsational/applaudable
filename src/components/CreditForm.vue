@@ -36,6 +36,10 @@
                         {{uploadedFilename}}
                     </span><button class="image-upload-cancel" @click.prevent="handleUploadCancel" v-if="imageUploaded">x</button>
                 </div>
+                <label for="imageAlt">
+                    Alternate Image Text (optional): 
+                </label>
+                <input type="text" name="imageAlt" placeholder="Headshot of an Actor" @change="handleChange" >
             </form>
         </div>
     </div>
