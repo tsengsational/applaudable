@@ -57,6 +57,7 @@
 <script>
 import {db, auth, storage} from '../main'
 import CreditForm from './CreditForm'
+import ShortId from 'shortid'
 
 export default {
     components: {
@@ -84,6 +85,8 @@ export default {
                 bio: null,
                 image: null,
                 link: null,
+                imagePath: null,
+                imageAlt: null
             }],
             cast: [{
                 name: null,
@@ -93,6 +96,8 @@ export default {
                 bio: null,
                 image: null,
                 link: null,
+                imagePath: null,
+                imageAlt: null
             }] 
         }
     },
@@ -195,6 +200,7 @@ export default {
         },
         handleSubmit: function() {
             const created = new Date
+            const id = ShortId.generate()
 
             let data = {
                 uid: auth.currentUser.uid,
@@ -210,56 +216,62 @@ export default {
             const currentUser = auth.currentUser
             const uid = currentUser.uid
             db.collection("programs")
-                .add({
+                .doc(id).set({
                     title: data.title,
                     hide_title: data.hide_title,
                     subtitle: data.subtitle,
                     image: data.image,
                     uid: uid,
                     org_id: data.orgId,
-                    created_at: data.created_at
+                    created_at: data.created_at,
+                    id: id
                 })
-                .then(program => {
-                    const id = program.id
-                    program.set({id: id}, {merge: true})
-                    return program.collection('creative')
+                .then(() => {
+                    return db.collection("programs").doc(id).collection('creative')
                 })
                 .then(creativeRef => {
                     let batch = db.batch()
                     const program = creativeRef.parent
                     const castRef = program.collection('cast')
                     data.creative.forEach((credit, index) => {
-                        const creditId = (+new Date()).toString() + "-" + index.toString()
-                        const ref = creativeRef.doc(creditId)
-                        const payload = {
-                            name: credit.name,
-                            role: credit.role,
-                            credited_role: credit.credited_role,
-                            featured: credit.featured,
-                            image: credit.image,
-                            link: credit.link,
-                            bio: credit.bio,
-                            index: index,
-                            id: creditId 
-                            }
-                        batch.set(ref, payload)
-                        })
+                        if (credit.bio != null) {
+                            const creditId = (+new Date()).toString() + "-" + index.toString()
+                            const ref = creativeRef.doc(creditId)
+                            const payload = {
+                                name: credit.name,
+                                role: credit.role,
+                                credited_role: credit.credited_role,
+                                featured: credit.featured,
+                                image: credit.image,
+                                link: credit.link,
+                                bio: credit.bio,
+                                index: index,
+                                id: creditId,
+                                imagePath: credit.imagePath,
+                                imageAlt: credit.imageAlt 
+                                }
+                            batch.set(ref, payload)
+                        }
+                    })
                     data.cast.forEach((credit, index) => {
-                        const creditId = (+new Date()).toString() + "-" + index.toString()
-                        const ref = castRef.doc(creditId)
-                        const payload = {
-                            name: credit.name,
-                            role: credit.role,
-                            credited_role: credit.credited_role,
-                            featured: credit.featured,
-                            image: credit.image,
-                            link: credit.link,
-                            bio: credit.bio,
-                            index: index,
-                            imagePath: credit.imagePath
-                            }
-                        batch.set(ref, payload)
-                        })
+                        if (credit.bio != null) {
+                            const creditId = (+new Date()).toString() + "-" + index.toString()
+                            const ref = castRef.doc(creditId)
+                            const payload = {
+                                name: credit.name,
+                                role: credit.role,
+                                credited_role: credit.credited_role,
+                                featured: credit.featured,
+                                image: credit.image,
+                                link: credit.link,
+                                bio: credit.bio,
+                                index: index,
+                                imagePath: credit.imagePath,
+                                imageAlt: credit.imageAlt
+                                }
+                            batch.set(ref, payload)
+                        }
+                    })
                     return batch.commit();
                 })
                 .then(() => {
