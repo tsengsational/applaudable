@@ -48,6 +48,7 @@
             </label>
             <input type="text" name="imageAlt" :value="credit.imageAlt" placeholder="headshot of actor" @change="handleChange" >
             <button class="save-btn" @click.prevent="handleSave"  >Save</button>
+            <button class="delete-btn" @click.prevent="handleDelete" >Delete</button>
         </form>
     </div>
 </template>
@@ -115,6 +116,15 @@ export default {
             }
             this.credit[key] = value
             console.log("handling change:", value)
+        },
+        handleDelete() {
+            const programId = this.$route.params.programId
+            const type = this.$route.params.creditType
+            const id = this.$route.params.id
+            db.collection("programs").doc(programId).collection(type).doc(id).delete()
+                .then(() => {
+                    this.$router.go(-1)
+                })
         },
         handleFileSelect: function(event) {
             const file = event.target.files[0]
@@ -243,7 +253,7 @@ div.credit-edit-container {
 
         }
 
-        .save-btn {
+        .save-btn, .delete-btn {
             margin-top: 16px;
             position: relative;
             left: calc(50% - 50px);

@@ -235,7 +235,7 @@ export default {
                     const castRef = program.collection('cast')
                     data.creative.forEach((credit, index) => {
                         if (credit.bio != null) {
-                            const creditId = (+new Date()).toString() + "-" + index.toString()
+                            const creditId = ShortId.generate()
                             const ref = creativeRef.doc(creditId)
                             const payload = {
                                 name: credit.name,
@@ -255,7 +255,7 @@ export default {
                     })
                     data.cast.forEach((credit, index) => {
                         if (credit.bio != null) {
-                            const creditId = (+new Date()).toString() + "-" + index.toString()
+                            const creditId = ShortId.generate()
                             const ref = castRef.doc(creditId)
                             const payload = {
                                 name: credit.name,
