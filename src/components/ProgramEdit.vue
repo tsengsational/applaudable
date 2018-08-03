@@ -15,15 +15,17 @@
             <button class="edit-btn" :class="{show: showEditButton.program_edit}" @click.prevent="handleProgramEdit" >
                 <font-awesome-icon icon="edit" ></font-awesome-icon>
             </button>
-
         </div>
-        <div class="featured-creative flex" >
-            <credit v-for="(credit, key) in featuredCreatives" :key="key" :credit="credit" :programId="programId" :creditType="'creative'" :type="'credited_role'" :editing="true" @creditClick="handleCreditClick" ></credit>
+        <div class="creative" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave" >
+            <div class="featured-creative flex" >
+                <credit v-for="(credit, key) in featuredCreatives" :key="key" :credit="credit" :programId="programId" :creditType="'creative'" :type="'credited_role'" :editing="true" @creditClick="handleCreditClick" ></credit>
+            </div>
+            <div class="regular-creative flex" >
+                <credit v-for="(credit, key) in regularCreatives" :key="key" :credit="credit" :programId="programId" :creditType="'creative'" :type="'credited_role'" :editing="true" @creditClick="handleCreditClick" />
+            </div>
+            <button class="add-btn creative" :class="{show: showEditButton.creative}" > <font-awesome-icon icon="plus" ></font-awesome-icon> </button>
         </div>
-        <div class="regular-creative flex" >
-            <credit v-for="(credit, key) in regularCreatives" :key="key" :credit="credit" :programId="programId" :creditType="'creative'" :type="'credited_role'" :editing="true" @creditClick="handleCreditClick" />
-        </div>
-        <div class="cast" >
+        <div class="cast" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave" >
             <h2 class="cast-title" ><span class="text line" >Featuring</span></h2>
             <div class="featured-cast-container flex">
                 <credit v-for="(credit, key) in featuredCast" :key="key" :credit="credit" :programId="programId" :creditType="'cast'" :type="'role'" :editing="true" @creditClick="handleCreditClick" />
@@ -31,6 +33,7 @@
             <div class="regular-cast-container flex" >
                 <credit v-for="(credit, key) in regularCast" :key="key" :credit="credit" :programId="programId" :creditType="'cast'" :type="'role'" :editing="true" @creditClick="handleCreditClick" />
             </div>
+            <button class="add-btn cast" :class="{show: showEditButton.cast}" > <font-awesome-icon icon="plus" ></font-awesome-icon> </button>
         </div>
         <div class="organization"  >
             <div class="org_edit" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave" >
@@ -105,6 +108,8 @@ export default {
             showEditButton: {
                 program_edit: null,
                 org_edit: null,
+                cast: null,
+                creative: null
             }
         }
     },
@@ -291,8 +296,11 @@ export default {
         .line::after {
             margin: 0 32px 0 16px;
         }
+        .cast, .creative {
+            position: relative;
+        }
 
-        button.edit-btn {
+        button.edit-btn, button.add-btn {
             position: absolute;
             right: 30px;
             bottom: 30px;
@@ -392,7 +400,7 @@ export default {
                 max-width: 700px;
                 max-height: 450px;
             }
-            button.edit-btn {
+            button.edit-btn, button.add-btn {
                 opacity: 0;
                 &.show {
                     opacity: 1;

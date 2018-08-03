@@ -11,25 +11,25 @@
         <div class="image" :style="imageStyle">
         </div>
         <div class="button-container" :class="{open: menuOpen}">
+            <div class="tooltip-container">
+                <div class="tooltip" :class="{alert: alert}" :style="tooltipStyle" >
+                    {{tooltip}}
+                </div>
+            </div>
             <button class="menu-btn" @click="toggleMenuOpen" >
                 <font-awesome-icon icon="ellipsis-v" ></font-awesome-icon>
             </button>
-            <button class="view-btn" @click="handleLinkClick" @mouseenter="handleLinkEnter" @mouseleave="handleLinkLeave" >
+            <button class="view-btn" @click="handleLinkClick" @mouseenter="handleButtonEnter" @mouseleave="handleButtonLeave" >
                 <font-awesome-icon icon="link" ></font-awesome-icon>
                 <input class="link" :value="url" >
-                <div class="tooltip-container">
-                    <div class="tooltip" :class="{alert: alert}" >
-                        {{tooltip}}
-                    </div>
-                </div>
             </button>
-            <button class="edit-btn" @click="handleEditClick" >
+            <button class="edit-btn" @click="handleEditClick" @mouseenter="handleButtonEnter" @mouseleave="handleButtonLeave">
                 <font-awesome-icon icon="edit" ></font-awesome-icon>
             </button>
-            <button class="qr-btn" @click="handleQrClick" >
+            <button class="qr-btn" @click="handleQrClick" @mouseenter="handleButtonEnter" @mouseleave="handleButtonLeave">
                 <font-awesome-icon icon="qrcode" ></font-awesome-icon>
             </button>
-            <button class="delete-btn" @click="handleDeleteClick" >
+            <button class="delete-btn" @click="handleDeleteClick" @mouseenter="handleButtonEnter" @mouseleave="handleButtonLeave">
                 <font-awesome-icon icon="trash-alt" ></font-awesome-icon>
             </button>  
         </div>
@@ -58,10 +58,13 @@ export default {
     data() {
         return {
             menuOpen: false,
-            tooltip: "click to copy link",
+            tooltip: "",
             alert: false,
             trashConfirm: false,
-            trashOpen: false
+            trashOpen: false,
+            tooltipStyle: {
+                transform: "translateX(0px)"
+            }
         }
     },
     props: ['program', 'user'],
@@ -137,15 +140,37 @@ export default {
             document.execCommand("copy")
             this.tooltip = "url copied"
         },
-        handleLinkEnter() {
-            console.log("entering")
+        handleButtonEnter(event) {
+            const type = event.target.classList[0]
             this.alert = true
+            switch (type) {
+                case "view-btn":
+                    this.tooltip = "Click to copy url"
+                    this.tooltipStyle.transform = "translateX(0px)"
+                    break;
+                case "edit-btn":
+                    this.tooltip = "Edit Program"
+                    this.tooltipStyle.transform = "translateX(-45px)"
+                    break;
+                case "qr-btn":
+                    this.tooltip = "QR Code"
+                    this.tooltipStyle.transform = "translateX(-90px)"
+                    break;
+                case "delete-btn":
+                    this.tooltip = "Delete Program"
+                    this.tooltipStyle.transform = "translateX(-135px)"
+                    break;
+                default:
+                    break;
+            }
+            
         },
-        handleLinkLeave() {
-            console.log("leaving")
+        handleButtonLeave(event) {
             this.alert = false
             setTimeout( () => {
-                this.tooltip = "click to copy link"
+                if (this.tooltip === "url copied") {
+                    this.tooltip = "click to copy link"
+                }
             }, 300)
         },
         handleViewClick() {
@@ -259,8 +284,8 @@ export default {
                 align-items:center;
                 justify-content: center;
                 padding: 5px 5px;
-                top: -80px;
-                left: -28px;
+                top: -30px;
+                right: 30px;
                 background-color: $yellow;
                 font-family: $body-font;
                 font-size: 11px;
@@ -269,7 +294,8 @@ export default {
                 width: 80px;
                 height: 40px;
                 opacity: 0;
-                transition: opacity .3s;
+                transform: translateX(0px);
+                transition: opacity .3s, transform .3s;
                 text-align: center;
                 box-sizing: border-box;
                 &.alert {
