@@ -1,6 +1,6 @@
 <template>
     <div :class="className" >
-        <div class="credit-container" >
+        <div class="credit-container" :class="{add: addCreditForm}" >
             <form class="credit-inputs" >
                 <label for="name">
                     Name: 
@@ -65,6 +65,9 @@ export default {
         },
         showUploadBtn: function() {
             return this.file ? true : false
+        },
+        addCreditForm: function() {
+            return this.$route.params.type ? true : false;
         }
     },
     watch: {
@@ -144,6 +147,28 @@ export default {
         padding: 32px 0;
         border-radius: 10px;
         box-shadow: 0px 0px 10px $gray;
+        font-family: $body-font;
+        &.add {
+            text-align: left;
+            width: 50%;
+            border: none;
+            box-shadow: none;
+            position: relative;
+            left: 25%;
+            .credit-inputs {
+            label, input {
+                display: inline-block;
+            }
+            label {
+                width: 25%;
+            }
+            input, textarea {
+                width: 75%;
+                box-sizing: border-box;
+                margin: 0 0 16px 0;
+            }
+            }
+        }
 
         .credit-inputs {
             width: 90%;
