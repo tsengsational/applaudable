@@ -23,7 +23,7 @@
             <div class="regular-creative flex" >
                 <credit v-for="(credit, key) in regularCreatives" :key="key" :credit="credit" :programId="programId" :creditType="'creative'" :type="'credited_role'" :editing="true" @creditClick="handleCreditClick" />
             </div>
-            <button class="add-btn creative" :class="{show: showEditButton.creative}" > <font-awesome-icon icon="plus" ></font-awesome-icon> </button>
+            <button class="add-btn creative" :class="{show: showEditButton.creative}" @click.prevent="handleAddCredit" > <font-awesome-icon icon="plus" ></font-awesome-icon> </button>
         </div>
         <div class="cast" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave" >
             <h2 class="cast-title" ><span class="text line" >Featuring</span></h2>
@@ -33,7 +33,7 @@
             <div class="regular-cast-container flex" >
                 <credit v-for="(credit, key) in regularCast" :key="key" :credit="credit" :programId="programId" :creditType="'cast'" :type="'role'" :editing="true" @creditClick="handleCreditClick" />
             </div>
-            <button class="add-btn cast" :class="{show: showEditButton.cast}" > <font-awesome-icon icon="plus" ></font-awesome-icon> </button>
+            <button class="add-btn cast" :class="{show: showEditButton.cast}" @click.prevent="handleAddCredit" > <font-awesome-icon icon="plus" ></font-awesome-icon> </button>
         </div>
         <div class="organization"  >
             <div class="org_edit" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave" >
@@ -174,7 +174,7 @@ export default {
         regularCreatives: function() {
             if (this.creative.length > 0) {
                 return this.creative.filter(credit => {
-                    return credit.featured === false;
+                    return credit.featured == false;
                 })
             }
         },
@@ -188,7 +188,7 @@ export default {
         regularCast: function() {
             if (this.cast.length > 0) {
                 return this.cast.filter(credit => {
-                    return credit.featured === false;
+                    return credit.featured == false;
                 })
             }
         },
@@ -227,6 +227,18 @@ export default {
     methods: {
             parseDonation: function(num) {
                 return num.toLocaleString()
+            },
+            handleAddCredit: function(event) {
+                const id = this.program.id
+                const type = event.target.classList[1]
+                const path = {
+                    name: "AddCredit",
+                    params: {
+                        id: id,
+                        type: type
+                    }
+                }
+                this.$router.push(path)
             },
             handleCreditClick: function(credit) {
                 this.modalCredit = credit;

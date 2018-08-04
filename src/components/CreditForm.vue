@@ -1,6 +1,6 @@
 <template>
     <div :class="className" >
-        <div class="credit-container" >
+        <div class="credit-container" :class="{add: addCreditForm}" >
             <form class="credit-inputs" >
                 <label for="name">
                     Name: 
@@ -24,7 +24,7 @@
                     Link: 
                 </label>
                 <input type="text" name="link" placeholder="http://www.someplace.com" @change="handleChange" >
-                <label for="image">
+                <label for="image" class="headshot">
                     Headshot:
                 </label>
                 <div class="image-upload-input-container" v-if="showUploadInput">
@@ -36,17 +36,19 @@
                         {{uploadedFilename}}
                     </span><button class="image-upload-cancel" @click.prevent="handleUploadCancel" v-if="imageUploaded">x</button>
                 </div>
-                <label for="imageAlt">
+                <label for="imageAlt" class="image-alt">
                     Alternate Image Text (optional): 
                 </label>
                 <input type="text" name="imageAlt" placeholder="Headshot of an Actor" @change="handleChange" >
+                <button class="submit-btn" @click.prevent="handleSubmit" v-if="addCreditForm" >Submit</button>
             </form>
         </div>
     </div>
 </template>
 
 <script>
-import {storage, auth} from "../main"
+import {storage, auth, db} from "../main"
+import ShortId from 'shortid'
 
 export default {
     data: function() {
@@ -56,6 +58,9 @@ export default {
             uploadedFilename: null,
             imageUploaded: false,
             showUploadInput: true,
+            credit: {
+                featured: false
+            }
         }
     },
     props: ['index', 'type'],
@@ -65,6 +70,9 @@ export default {
         },
         showUploadBtn: function() {
             return this.file ? true : false
+        },
+        addCreditForm: function() {
+            return this.$route.params.type ? true : false;
         }
     },
     watch: {
@@ -77,18 +85,22 @@ export default {
             const key = event.target.name
             const inputType = event.target.type
             let value = null
-            if (inputType === "checkbox") {
-               value = event.target.checked
-            } else if (inputType === "number") {
-                value = parseInt(event.target.value)
-            } 
-            else {
-                value = event.target.value
+                if (inputType === "checkbox") {
+                   value = event.target.checked
+                } else if (inputType === "number") {
+                    value = parseInt(event.target.value)
+                } 
+                else {
+                    value = event.target.value
+                }
+            if (this.addCreditForm) {
+                this.credit[key] = value
+            } else {
+                const index = this.index
+                const type = this.type
+                this.$emit("credit-change", [type, key, value, index])
+                console.log("handling change:", value)
             }
-            const index = this.index
-            const type = this.type
-            this.$emit("credit-change", [type, key, value, index])
-            console.log("handling change:", value)
         },
         handleFileSelect: function(event) {
             const file = event.target.files[0]
@@ -130,6 +142,23 @@ export default {
                     console.log("image deleted")
                 })
                 .catch(console.error);
+        },
+        handleSubmit: function() {
+            const id = this.$route.params.id
+            const type = this.$route.params.type
+            const creditId = ShortId.generate()
+            const payload = {
+                id: creditId,
+                ...this.credit
+            }
+            db.collection("programs").doc(id).collection(type).doc(creditId).set(payload)
+                .then(() => {
+                    console.log("created", payload)
+                    this.$router.go(-1)
+                })
+                .catch((error) => {
+                    console.log(error)
+                })
         }
     }
 }
@@ -144,6 +173,32 @@ export default {
         padding: 32px 0;
         border-radius: 10px;
         box-shadow: 0px 0px 10px $gray;
+        font-family: $body-font;
+        &.add {
+            text-align: left;
+            width: 50%;
+            border: none;
+            box-shadow: none;
+            position: relative;
+            left: 25%;
+            .credit-inputs {
+            label, input {
+                display: inline-block;
+            }
+            label {
+                width: 25%;
+            }
+            input, textarea {
+                @include input(75%);
+                box-sizing: border-box;
+                margin: 0 0 16px 0;
+                &.checkbox {
+                    width: calc(75% - 10px);
+                    height: 20px;
+                }
+            }
+            }
+        }
 
         .credit-inputs {
             width: 90%;
@@ -152,10 +207,46 @@ export default {
             top: 5%;
             left: 5%;
             margin-bottom: 32px;
-            label.bio {
+            label.bio, label.headshot {
                 vertical-align: top;
             }
-
+            label.image-alt {
+                vertical-align: top;
+            }
+            .image-upload-input-container {
+                display: inline-block;
+                width: 75%;
+                input.image-upload {
+                    width: 100%;
+                }
+                .image-upload-btn {
+                    position: relative;
+                    right: 0%;
+                    display: block;
+                    width: 100px;
+                    height: 40px;
+                    border: 0;
+                    background-color: $gray;
+                    border: none;
+                    font-family: $body-font;
+                    text-align: center;
+                    font-size: 14px;
+                    font-weight: 900;
+                    text-transform: uppercase;
+                    color: $white;
+                    opacity: 1;
+                    margin-bottom: 16px;
+                    transition: background-color .3s, opacity .6s, color .3s;
+                    &.hide {
+                        display: none;
+                        opacity: 0;
+                    }
+                    &:hover {
+                        background-color: $yellow;
+                        color: $black;
+                    } 
+                }
+            }
             .image-uploaded-container {
             display: inline;
 
@@ -198,6 +289,12 @@ export default {
                 &.hide {
                     display: none;
                 }
+            }
+            .submit-btn {
+                @include button(100px, 40px, 16px);
+                position: relative;
+                left: calc(50% - 50px);
+                top: 30px;
             }
         }
     }
