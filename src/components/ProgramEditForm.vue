@@ -239,13 +239,7 @@ export default {
         display:inline;
     }
     input {
-        font-family: $body-font;
-        font-size: 14px;
-        width: 75%;
-        box-sizing: border-box;
-        margin-bottom: 16px;
-        border: 1px $gray solid;
-        padding: 5px 10px;
+        @include input(75%);
         &.checkbox {
             width: calc(75% - 10px);
             height: 20px;

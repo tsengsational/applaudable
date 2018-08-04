@@ -174,7 +174,7 @@ export default {
         regularCreatives: function() {
             if (this.creative.length > 0) {
                 return this.creative.filter(credit => {
-                    return credit.featured === false;
+                    return credit.featured == false;
                 })
             }
         },
@@ -188,7 +188,7 @@ export default {
         regularCast: function() {
             if (this.cast.length > 0) {
                 return this.cast.filter(credit => {
-                    return credit.featured === false;
+                    return credit.featured == false;
                 })
             }
         },

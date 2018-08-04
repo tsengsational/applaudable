@@ -28,3 +28,13 @@ $gray: #b9bfc5;
         color: $black;
     } 
 }
+
+@mixin input($width) {
+    font-family: $body-font;
+    font-size: 14px;
+    width: $width;
+    box-sizing: border-box;
+    margin-bottom: 16px;
+    border: 1px $gray solid;
+    padding: 5px 10px;
+}
