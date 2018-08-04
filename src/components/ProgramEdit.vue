@@ -312,7 +312,7 @@ export default {
             position: relative;
         }
 
-        button.edit-btn, button.add-btn {
+        button.edit-btn, .add-btn {
             position: absolute;
             right: 30px;
             bottom: 30px;
@@ -333,8 +333,11 @@ export default {
                 background-color: $yellow;
                 border: 1px $yellow solid;
                 color: $black;
-            }
-            
+            } 
+        }
+
+        button.add-btn {
+            bottom: 10px;
         }
 
         .featured-creative, .regular-creative, .featured-cast-container, .regular-cast-container {
