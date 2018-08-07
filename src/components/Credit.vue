@@ -9,14 +9,19 @@
         <button class="edit-btn credit-btn" :class="{show: showEditBtn }" @click="handleEditClick" v-if="showEditFormBtn" >
                 <font-awesome-icon icon="edit" ></font-awesome-icon>
         </button>
+        <instructions-modal v-if="displayInstructions"></instructions-modal>
     </div>
 </template>
 
 <script>
 import {db, storage} from '../main';
+import InstructionsModal from './InstructionsModal'
 
 export default {
-    props: ["credit", "type", 'editing', 'programId', 'creditType', 'editing'],
+    props: ["credit", "type", 'editing', 'programId', 'creditType', 'editing', 'index'],
+    components: {
+        InstructionsModal
+    },
     data: function(){
         return {
             showEditBtn: false
@@ -32,6 +37,9 @@ export default {
             } else if (this.creditType === "staff") {
                 return false
             }
+        },
+        displayInstructions: function() {
+            return this.creditType === "creative" && this.credit.featured && this.index === 0 ? true : false;
         }
     },
     methods: {

@@ -12,7 +12,8 @@
             <h4>{{program.subtitle}}</h4>
         </div>
         <div class="featured-creative flex" >
-            <credit v-for="(credit, key) in featuredCreatives" :key="key" :credit="credit" :creditType="'creative'" :type="'credited_role'" :editing="false"  @creditClick="handleCreditClick" />
+            <credit v-for="(credit, key) in featuredCreatives" :key="key" :credit="credit" :creditType="'creative'" :type="'credited_role'" :editing="false"  @creditClick="handleCreditClick" :index="key" >
+            </credit>
         </div>
         <div class="regular-creative flex" >
             <credit v-for="(credit, key) in regularCreatives" :key="key" :credit="credit" :creditType="'creative'" :type="'credited_role'" :editing="false" @creditClick="handleCreditClick" />
@@ -56,6 +57,7 @@
                 </div>
             </div>
         </div>
+        
         <div class="pre-load">
             <img v-for="(credit, key) in allCredits" :key="key" :src="credit.image">
         </div>
@@ -69,7 +71,7 @@ import DisplayModal from './Modal'
 
 export default {
     components: {
-        Credit, DisplayModal
+        Credit, DisplayModal, Instructions
     },
     data: function() {
         return {
